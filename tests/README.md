@@ -47,11 +47,6 @@ is true.
 
 Not tested here: the build system; the suite opens no socket.
 
-The calling convention takes three modules because it is three rules --
-a keyword-only parameter stays keyword-only, a private signature carries
-no default, and a public name promises what the call answers -- and
-section 7 states it as one bullet.
-
 ## Property tests
 
 The properties are hand-rolled rather than hypothesis's, each over

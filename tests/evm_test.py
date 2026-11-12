@@ -110,7 +110,7 @@ def test_the_derivation_holds_over_generated_keys() -> None:
         address = address_from_pub_key(point)
         assert is_valid_address(address)
         assert is_valid_address(address.lower())
-        assert is_valid_address("0x" + address[2:].upper())
+        assert is_valid_address(f"0x{address[2:].upper()}")
         i = rng.choice([i for i, c in enumerate(address) if c in "abcdefABCDEF"])
         flipped = address[:i] + address[i].swapcase() + address[i + 1 :]
         assert flipped[2:] not in {flipped[2:].lower(), flipped[2:].upper()}
@@ -192,20 +192,20 @@ _ADDRESS = _EIP55[4]
     [
         ("", "no 0x prefix"),
         (_ADDRESS[2:], "no 0x prefix"),
-        ("0X" + _ADDRESS[2:], "no 0x prefix"),
+        (f"0X{_ADDRESS[2:]}", "no 0x prefix"),
         ("0x", "0 characters after 0x, not 40"),
         (_ADDRESS[:-1], "39 characters after 0x, not 40"),
-        (_ADDRESS + "0", "41 characters after 0x, not 40"),
+        (f"{_ADDRESS}0", "41 characters after 0x, not 40"),
         # the length is read before the digits, so no hex digit is named
         ("0xzz", "2 characters after 0x, not 40"),
         ("0x" + "g" * 41, "41 characters after 0x, not 40"),
-        (_ADDRESS[:-1] + "g", "not a hex digit at position 41"),
-        ("0x" + " " + _ADDRESS[3:], "not a hex digit at position 2"),
+        (f"{_ADDRESS[:-1]}g", "not a hex digit at position 41"),
+        (f"0x {_ADDRESS[3:]}", "not a hex digit at position 2"),
         # a fullwidth digit is a digit to `str.isdigit`, and no hex digit
-        (_ADDRESS[:2] + "\uff15" + _ADDRESS[3:], "not a hex digit at position 2"),
+        (f"{_ADDRESS[:2]}\uff15{_ADDRESS[3:]}", "not a hex digit at position 2"),
         # the checksum's last letter in the other case
-        (_ADDRESS[:-1] + "D", "wrong EIP-55 checksum"),
-        (_ADDRESS[:3] + "A" + _ADDRESS[4:], "wrong EIP-55 checksum"),
+        (f"{_ADDRESS[:-1]}D", "wrong EIP-55 checksum"),
+        (f"{_ADDRESS[:3]}A{_ADDRESS[4:]}", "wrong EIP-55 checksum"),
     ],
 )
 def test_a_malformed_address_is_refused(address: str, reason: str) -> None:
@@ -220,7 +220,7 @@ def test_a_malformed_address_is_refused(address: str, reason: str) -> None:
 
 @pytest.mark.parametrize(
     "address",
-    [_ADDRESS.lower(), "0x" + _ADDRESS[2:].upper(), "0x" + "0" * 40],
+    [_ADDRESS.lower(), f"0x{_ADDRESS[2:].upper()}", "0x" + "0" * 40],
 )
 def test_an_address_in_one_case_carries_no_checksum(address: str) -> None:
     """All lower case, all upper case, or no letter: the form is checked."""

@@ -11,7 +11,7 @@ btclib-org/btclib#814 settled, so this file drives the two separately:
 - **a value of a type the signature does not declare** is the caller's
   own mistake, and leaves as a `CoinAddressesTypeError`.
 - **a value of a declared type that no valid input carries** is a fact
-  about the input, and leaves as a `CoinAddressesException`, except from
+  about the input, and leaves as a `CoinAddressesValueError`, except from
   an `is_*` function, which answers `False` about it.
 
 ## How it calls what it calls
@@ -31,8 +31,7 @@ makes the walk automatic.
 
 A **parameter with a default** is never driven: to reach it the arguments
 before it would have to be valid, which is the table this design is built
-to do without. `tests/bool_parameter_test.py` carries that table for the
-`bool` ones.
+to do without.
 
 A function taking a type the vocabulary does not build is driven by the
 tests of its own module. So is one with a keyword-only parameter that
@@ -53,8 +52,8 @@ from typing import Any
 import pytest
 
 from coin_addresses.exceptions import (
-    CoinAddressesException,
     CoinAddressesTypeError,
+    CoinAddressesValueError,
 )
 
 _LIBRARY = Path(__file__).parents[1] / "src" / "coin_addresses"
@@ -165,19 +164,20 @@ def test_a_wrong_type_leaves_as_a_type_error_of_the_package(dotted: str) -> None
 
 
 @pytest.mark.parametrize("dotted", _DRIVEN)
-def test_a_wrong_value_leaves_as_an_exception_of_the_package(dotted: str) -> None:
+def test_a_wrong_value_leaves_as_a_value_error_of_the_package(dotted: str) -> None:
     """The second rule, over what the walk drives.
 
-    The base and not one of the two: which of them a malformed value
-    deserves is the function's to decide, and the contract a caller is
-    given is the base. An `is_*` function answers `False` instead, as its
-    name promises a bool about any value of its declared types.
+    `CoinAddressesValueError` and not the base, as CONTRIBUTING.md's "The
+    public surface" states it: a `CoinAddressesTypeError` here would be
+    the package calling a fact about the input a caller's mistake. An
+    `is_*` function answers `False` instead, as its name promises a bool
+    about any value of its declared types.
     """
     for call in _calls(dotted, _WRONG_VALUE):
         if dotted.rpartition(".")[2].startswith("is_"):
             assert call() is False
             continue
-        with pytest.raises(CoinAddressesException):
+        with pytest.raises(CoinAddressesValueError):
             call()
 
 
