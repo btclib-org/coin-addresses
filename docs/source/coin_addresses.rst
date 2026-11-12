@@ -4,6 +4,20 @@ coin_addresses package
 Submodules
 ----------
 
+coin_addresses.bitcoin_cash module
+----------------------------------
+
+.. automodule:: coin_addresses.bitcoin_cash
+   :members:
+   :show-inheritance:
+
+coin_addresses.dogecoin module
+------------------------------
+
+.. automodule:: coin_addresses.dogecoin
+   :members:
+   :show-inheritance:
+
 coin_addresses.evm module
 -------------------------
 
@@ -15,6 +29,13 @@ coin_addresses.exceptions module
 --------------------------------
 
 .. automodule:: coin_addresses.exceptions
+   :members:
+   :show-inheritance:
+
+coin_addresses.litecoin module
+------------------------------
+
+.. automodule:: coin_addresses.litecoin
    :members:
    :show-inheritance:
 

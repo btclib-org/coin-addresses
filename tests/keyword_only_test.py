@@ -37,9 +37,10 @@ if TYPE_CHECKING:
 
 # Walked from `coin_addresses`, on the commit this file is part of: every
 # public callable that takes at least one keyword-only parameter, and the
-# names of those parameters in declaration order. None takes one yet, and
-# the first that does is a site the test below fails on until it is here
-KEYWORD_ONLY: dict[str, list[str]] = {}
+# names of those parameters in declaration order
+KEYWORD_ONLY: dict[str, list[str]] = {
+    "coin_addresses.litecoin:address_from_pub_key": ["script_type"],
+}
 
 
 def _kwonly_names(signature: inspect.Signature) -> list[str]:

@@ -31,8 +31,12 @@ requires-python = ">=3.11"
 # the sibling packages this one builds on, and nothing else:
 # tests/imports_test.py refuses a module that loads a package these and
 # their own requirements do not name. `ecc` parses a public key from a
-# point or its SEC encoding, compressed or not
-dependencies = ["ecc>=2026.11.12"]
+# point or its SEC encoding, compressed or not, and `base58-bech32` is the
+# Base58Check, bech32 and CashAddr codec
+dependencies = [
+    "base58-bech32>=2026.11.12",
+    "ecc>=2026.11.12",
+]
 keywords = [
     # the repository's topics, entry for entry
     "cryptocurrency",
@@ -245,6 +249,14 @@ ignore-regex = '`[^`]*`'
 # the hashes [tool.codespell] skips above, written again rather than
 # shared because the two take different glob syntaxes
 extend-exclude = [".secrets.baseline", "uv.lock"]
+
+[tool.typos.default]
+# addresses, keys and hashes written inline in the test sources: the hook
+# runs with --write-changes, so a "correction" of one is a rewrite of a
+# vector. Ignored by shape rather than by file, the prose beside them
+# staying checked: an unbroken run of 26 characters or more is a literal,
+# not a word
+extend-ignore-re = ['[0-9A-Za-z+/]{26,}={0,2}']
 
 [tool.typos.default.extend-words]
 # `intoto` in the bundle's name `<tag>.intoto.jsonl`, as for codespell above:
