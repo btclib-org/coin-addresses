@@ -39,6 +39,13 @@ coin_addresses.litecoin module
    :members:
    :show-inheritance:
 
+coin_addresses.tron module
+--------------------------
+
+.. automodule:: coin_addresses.tron
+   :members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

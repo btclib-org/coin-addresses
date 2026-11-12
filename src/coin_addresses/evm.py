@@ -21,15 +21,11 @@ handed.
 
 from __future__ import annotations
 
-from ecc.curves import PubKey, point_from_pub_key, secp256k1
-from ecc.exceptions import EccTypeError, EccValueError
+from ecc.curves import PubKey
 
+from coin_addresses._ethereum import pub_key_hash
 from coin_addresses._keccak import keccak_256
-from coin_addresses.exceptions import (
-    CoinAddressesException,
-    CoinAddressesTypeError,
-    CoinAddressesValueError,
-)
+from coin_addresses.exceptions import CoinAddressesTypeError, CoinAddressesValueError
 
 __all__ = [
     "address_from_pub_key",
@@ -54,24 +50,10 @@ def _checksum_encode(address: bytes) -> str:
 def address_from_pub_key(pub_key: PubKey) -> str:
     """Return the EIP-55 address of a secp256k1 public key.
 
-    The key is any spelling `ecc.curves.point_from_pub_key` reads: a
-    point, or its SEC encoding, compressed or not, as bytes or as hex. A
-    value of no type a key has is a `CoinAddressesTypeError`, and one that
-    is no point of the curve a `CoinAddressesValueError`.
+    The key is read, and refused, as
+    `coin_addresses._ethereum.pub_key_hash` says.
     """
-    # the refusal is raised after the `try`, so that ecc's exception is
-    # neither its cause nor its context
-    kind: type[CoinAddressesException]
-    try:
-        x, y = point_from_pub_key(pub_key, secp256k1)
-    except EccTypeError:
-        kind = CoinAddressesTypeError
-    except EccValueError:
-        kind = CoinAddressesValueError
-    else:
-        coordinates = x.to_bytes(32, "big") + y.to_bytes(32, "big")
-        return _checksum_encode(keccak_256(coordinates)[-20:])
-    raise kind("not a public key")
+    return _checksum_encode(pub_key_hash(pub_key))
 
 
 def assert_valid_address(address: str) -> None:
