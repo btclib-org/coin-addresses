@@ -6,13 +6,14 @@
 
 A pay-to-public-key-hash address carries the HASH160 of the key's SEC
 encoding, and its compressed and uncompressed encodings give different
-addresses. The coin modules give the address of the compressed one,
-which BIP32 wallets derive, and refuse a key written uncompressed rather
-than answer an address its holder may not expect.
+addresses. The bitcoin clones' modules give the address of the
+compressed one, which BIP32 wallets derive, and refuse a key written
+uncompressed rather than answer an address its holder may not expect.
 
 A legacy address is the Base58Check of a version byte and a hash. The
 version byte says the coin and the script type; which ones a coin uses
-is that coin's module's to say.
+is that coin's module's to say. Tron writes its address the same way,
+with a hash of its own.
 
 Whitespace around a legacy address is refused. The reference nodes'
 `DecodeBase58` skips leading and trailing whitespace, so to Bitcoin Cash

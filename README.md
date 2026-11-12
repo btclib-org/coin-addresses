@@ -18,12 +18,13 @@ and no signature.
 
 No release is out yet. `coin_addresses.evm` derives and validates the
 addresses of Ethereum and of the EVM chains, with their EIP-55 checksum,
-and `coin_addresses.bitcoin_cash`, `coin_addresses.litecoin` and
-`coin_addresses.dogecoin` those of three bitcoin clones. Each other
-format arrives in a pull request of its own. The first release is to
-cover the coins on secp256k1: the bitcoin clones (Bitcoin Cash, Bitcoin
-SV, Bitcoin Gold, eCash, Litecoin, Dogecoin and Dash), the EVM chains,
-Tron, Cosmos and XRP. It builds on
+`coin_addresses.bitcoin_cash`, `coin_addresses.litecoin` and
+`coin_addresses.dogecoin` those of three bitcoin clones, and
+`coin_addresses.tron` those of Tron. Each other format arrives in a pull
+request of its own. The first release is to cover the coins on
+secp256k1: the bitcoin clones (Bitcoin Cash, Bitcoin SV, Bitcoin Gold,
+eCash, Litecoin, Dogecoin and Dash), the EVM chains, Tron, Cosmos and
+XRP. It builds on
 [ecc](https://github.com/btclib-org/ecc) for the curve and on
 [base58-bech32](https://github.com/btclib-org/base58-bech32) for the
 encodings, and not on btclib.
@@ -79,6 +80,18 @@ assert address == "bitcoincash:qp63uahgrxged4z5jswyt5dn5v3lzsem6cy4spdc2h"
 address = bitcoin_cash.legacy_address_from_pub_key(pub_key)
 assert address == "1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH"
 assert dogecoin.is_valid_address(dogecoin.address_from_pub_key(pub_key))
+```
+
+A Tron address carries the bytes of the key's Ethereum address, in
+Base58Check:
+
+```python
+from coin_addresses import tron
+
+pub_key = "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"
+address = tron.address_from_pub_key(pub_key)
+assert address == "TMVQGm1qAQYVdetCeGRRkTWYYrLXuHK2HC"
+assert tron.is_valid_address(address)
 ```
 
 `tests/readme_test.py` runs every Python block of this file, so the
