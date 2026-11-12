@@ -1,0 +1,18 @@
+# Tron addresses, mutated: the prefix byte and the hash length of the
+# Base58Check form. A prefix compared with the wrong byte is an address that
+# validates for a chain it was not written for.
+
+[cosmic-ray]
+module-path = [
+    "src/coin_addresses/tron.py",
+]
+
+test-command = """python -m pytest -x -q -p no:randomly \
+  tests/tron_test.py"""
+
+timeout = 300
+
+excluded-modules = []
+
+[cosmic-ray.distributor]
+name = "local"

@@ -116,6 +116,15 @@ check = [
     # fallback, which needs an index, is never asked for
     "uv_build>=0.12.0,<0.14",
 ]
+# the build backend .clusterfuzzlite/build.sh installs the package with, in
+# the fuzz container and non-isolated, so that the backend is a hashed
+# entry of .clusterfuzzlite/requirements.txt -- this lock exported --
+# rather than whatever an isolated build resolves off the index.
+# [build-system]'s own specifier, the way `check`'s is
+fuzz = ["uv_build>=0.12.0,<0.14"]
+# what mutation.yml's sessions run, btclib-org/.github's
+# reusable-mutation.yml installing it beside `test`
+mutation = ["cosmic-ray>=8.9.0"]
 # the marker because the `sphinx` release the lock resolves declares a
 # Requires-Python above requires-python's floor, and an unmarked bound
 # leaves the older interpreters no release to resolve
@@ -129,6 +138,7 @@ dev = [
     { include-group = "lint" },
     { include-group = "check" },
     { include-group = "docs" },
+    { include-group = "mutation" },
 ]
 
 [tool.uv]
@@ -160,13 +170,16 @@ source-include = [
 # exclusions win over the inclusions above, and are unanchored unless a
 # pattern starts with "/"
 source-exclude = [
-    # tests whose subject the sdist does not carry: .github is not in it,
-    # so each of these reads a path an unpacked sdist does not have and
-    # fails there. Anchored, because a name this specific matching at some
-    # other depth would be an accident rather than a decision.
+    # tests whose subject the sdist does not carry: neither .github nor
+    # fuzz/ is in it, so each of these reads a path an unpacked sdist does
+    # not have and fails there. Anchored, because a name this specific
+    # matching at some other depth would be an accident rather than a
+    # decision.
     # tests/source_exclude_test.py checks that every test its reader finds
-    # reaching .github is named here
+    # reaching .github or fuzz/ is named here
+    "/tests/fuzz_corpus_test.py",
     "/tests/interpreters_test.py",
+    "/tests/mutation_sessions_test.py",
     "/tests/normalize_sdist_test.py",
     "/tests/release_digests_test.py",
     # where `make html` writes
@@ -195,11 +208,15 @@ package = ["src/coin_addresses"]
 # tracked files the sdist is meant not to carry, beyond what
 # [tool.uv.build-backend] source-exclude takes out, which check-sdist
 # reads for the uv backend: the workspaces of an editor and of an agent,
-# and COPYRIGHT, which `project.license-files` does not name
+# COPYRIGHT, which `project.license-files` does not name, and
+# ClusterFuzzLite's configuration with the harnesses it builds, which
+# fuzz.yml reads and nothing installed from the sdist runs
 git-only = [
     ".claude/",
+    ".clusterfuzzlite/",
     ".vscode/",
     "COPYRIGHT",
+    "fuzz/",
 ]
 
 [tool.pytest.ini_options]
@@ -230,8 +247,10 @@ xfail_strict = true
 filterwarnings = ["error"]
 
 [tool.codespell]
-# .secrets.baseline and uv.lock are hashes, not text to correct
-skip = ".secrets.baseline,uv.lock"
+# .secrets.baseline and uv.lock are hashes, not text to correct.
+# fuzz/corpus/'s seeds are the exact bytes a harness is handed, skipped for
+# the reason .pre-commit-config.yaml's trailing-whitespace hook gives
+skip = ".secrets.baseline,uv.lock,fuzz/corpus/*"
 # not a misspelling: `intoto`, in-toto's own spelling in the bundle's name
 # `<tag>.intoto.jsonl`. RELEASING.md writes it in fenced commands, outside
 # the backticks `ignore-regex` below hides, and the dictionary offers
@@ -246,9 +265,9 @@ ignore-regex = '`[^`]*`'
 # typos splits hyphens, snake_case and camelCase itself, where codespell
 # keeps a hyphenated token whole
 [tool.typos.files]
-# the hashes [tool.codespell] skips above, written again rather than
-# shared because the two take different glob syntaxes
-extend-exclude = [".secrets.baseline", "uv.lock"]
+# the hashes and the seeds [tool.codespell] skips above, written again
+# rather than shared because the two take different glob syntaxes
+extend-exclude = [".secrets.baseline", "uv.lock", "fuzz/corpus/**"]
 
 [tool.typos.default]
 # addresses, keys and hashes written inline in the test sources: the hook
@@ -417,7 +436,10 @@ ignore = [
 # path, never an import
 ".github/scripts/*.py" = ["INP001"]
 "docs/source/conf.py" = ["INP001"]
-"**/__init__.py" = ["F401"]         # re-exported imports
+# ClusterFuzzLite's build.sh hands these to PyInstaller, never to an
+# import, so fuzz/ carries no __init__.py
+"fuzz/*.py" = ["INP001"]
+"**/__init__.py" = ["F401"] # re-exported imports
 # preview mode's undefined-export does not special-case a module-level
 # __getattr__ (astral-sh/ruff#18504, open): the root package publishes
 # its submodules that way, as its docstring says, and tests/all_test.py
