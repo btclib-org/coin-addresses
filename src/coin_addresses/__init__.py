@@ -55,6 +55,7 @@ except PackageNotFoundError:
     __version__ = "unknown"
 
 __all__ = [
+    "evm",
     "exceptions",
 ]
 

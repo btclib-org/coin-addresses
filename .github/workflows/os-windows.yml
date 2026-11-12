@@ -9,13 +9,13 @@ name: os-windows
 # records beside the command that re-derives it, makes every further cell
 # before a review a cost to every review.
 #
-# What these cells ask is the standard library beneath this package on a
-# platform the gate does not sample -- the interpreters themselves, PyPy
-# and the free-threaded builds among them. A workflow of its own rather
-# than a row in deps-latest.yml: this one holds the dependencies at the
-# lock and moves the platform, deps-latest.yml moves both, so a red cell
-# there with this workflow green is an upgrade, and red in both is the
-# platform.
+# What these cells ask is the standard library and ecc beneath this
+# package on a platform the gate does not sample -- the interpreters
+# themselves, PyPy and the free-threaded builds among them. A workflow
+# of its own rather than a row in deps-latest.yml: this one holds the
+# dependencies at the lock and moves the platform, deps-latest.yml moves
+# both, so a red cell there with this workflow green is an upgrade, and
+# red in both is the platform.
 #
 # It gates no merge, but release.yml calls it, so a regression here cannot
 # be published. The suite job, its interpreter set-up and its --no-cov are

@@ -191,6 +191,26 @@ def test_the_root_publishes_every_top_level_module() -> None:
         assert getattr(coin_addresses, name).__name__ == f"coin_addresses.{name}"
 
 
+# what every module of a coin family publishes, CONTRIBUTING.md's "The
+# public surface" says
+FAMILY_NAMES = ("address_from_pub_key", "assert_valid_address", "is_valid_address")
+
+
+def test_every_family_module_publishes_the_family_names() -> None:
+    """A coin family's module publishes the same three names as the others.
+
+    Every top-level module but `exceptions` is a family's, so a module
+    added for a coin is held to the names a caller already knows.
+    """
+    families = [name for name in coin_addresses.__all__ if name != "exceptions"]
+    assert "evm" in families
+    missing = {
+        name: sorted(set(FAMILY_NAMES) - set(getattr(coin_addresses, name).__all__))
+        for name in families
+    }
+    assert not {name: found for name, found in missing.items() if found}
+
+
 def test_the_root_answers_only_for_what_it_publishes() -> None:
     """A name outside the list raises, as an attribute of anything does.
 

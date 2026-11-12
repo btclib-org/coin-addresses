@@ -69,11 +69,33 @@ extensions = [
 # nobody. Without the extension it is an unknown directive, which -W turns
 # into a failed build -- the open questions belong in the issue tracker
 
-# the standard library, whose types the signatures name. No sibling of
-# this organization: the package imports none
+# the ecc release uv.lock pins, read from the lock as the release above is
+# from pyproject.toml, so that a lock bump moves the ecc inventory below
+# with no edit here. Read the Docs builds each ecc tag under the tag's
+# name, `v` and the version, and ecc's `latest` follows its main branch,
+# which can rename what the pinned release defines
+[ECC_VERSION] = [
+    package["version"]
+    for package in tomllib.loads((ROOT / "uv.lock").read_text(encoding="utf-8"))[
+        "package"
+    ]
+    if package["name"] == "ecc"
+]
+
+# the standard library, and the siblings this package depends on, whose
+# types its signatures name
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", (None, "_inventories/python.inv")),
+    "ecc": (
+        f"https://btclib-ecc.readthedocs.io/en/v{ECC_VERSION}",
+        (None, "_inventories/ecc.inv"),
+    ),
 }
+# no reuse of a fetched inventory: in a reused doctree directory sphinx
+# keeps one per mapping name, so a changed ecc URL would still read the
+# old one. Section 2 of the organization's standard asks for 0 where a
+# mapping names a sibling
+intersphinx_cache_limit = 0
 # `_inventories/python.inv` is a copy of Python 3.14's inventory and no
 # cache: sphinx reads it only when `docs.python.org` fails, so a live site
 # always wins. It is the Wayback Machine's capture of 2026-08-28,
@@ -81,6 +103,12 @@ intersphinx_mapping = {
 # To refresh it, run this from the repository root and rewrite the version
 # and source above:
 # curl -fsSL -o docs/source/_inventories/python.inv https://docs.python.org/3/objects.inv
+# `_inventories/ecc.inv` is the same for ecc: a copy of the inventory that
+# https://btclib-ecc.readthedocs.io/en/v2026.11.12/objects.inv served on
+# 2026-11-12, read only when that site fails. To refresh it, run this from
+# the repository root, with the version uv.lock pins, and rewrite the
+# version and date:
+# curl -fsSL -o docs/source/_inventories/ecc.inv https://btclib-ecc.readthedocs.io/en/v<version>/objects.inv
 
 source_suffix = [".rst", ".md"]
 

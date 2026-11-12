@@ -350,12 +350,12 @@ to. `tests/all_test.py` checks all of this and finds the modules rather
 than listing them: a public name kept out of a list is recorded in its
 `UNEXPORTED` table.
 
-**The package imports the standard library alone**, `dependencies` in
-`pyproject.toml` being empty; the pull request whose code first needs a
+**The package imports the standard library and what `dependencies` in
+`pyproject.toml` declares**; the pull request whose code first needs a
 sibling package declares it there. It never imports btclib: what it builds
 on is `ecc` and `base58-bech32` (btclib-org/.github#2197).
 `tests/imports_test.py` imports each module alone and refuses one that
-loads a module neither the standard library's nor this package's.
+loads a package the declared ones do not account for, or btclib.
 
 **The package re-exports nothing it does not own**
 (btclib-org/btclib#2404): a name is published by the module that defines
@@ -366,6 +366,32 @@ it, and `tests/all_test.py` holds every `__all__` to that.
 a caller catching `ValueError` still catches it, and both under
 `CoinAddressesException`. `tests/exceptions_test.py` holds the classes to
 that shape.
+
+**A value of a type the signature does not declare is the caller's own
+mistake**, and leaves as a `CoinAddressesTypeError`. A value of a declared
+type that no valid input carries is a fact about the input, and leaves as
+a `CoinAddressesValueError`, or as `False` from an `is_*` function.
+`tests/input_validation_test.py` drives both over every public function
+whose required parameters are all of the package's input types.
+
+**What a function answers, its name says.** `assert_*` refuses and
+returns `None`; `is_*` answers a `bool` about a value of a declared type,
+and `verify*` one about a signature or a proof; `check_*` answers a
+`bool` and refuses what cannot be an answer. A public function answering
+a `bool` carries one of these prefixes. `tests/name_contract_test.py` is
+that gate.
+
+**A private function takes no default argument**, its callers all being
+in this tree, and a keyword-only parameter stays keyword-only:
+`tests/private_defaults_test.py` and `tests/keyword_only_test.py` are the
+gates.
+
+**A coin family is a module**, `coin_addresses.evm` for the chains that
+write Ethereum's addresses, and each publishes `address_from_pub_key`,
+`is_valid_address` and `assert_valid_address`, so that a caller moving
+from one coin to another changes the module and not the call.
+`tests/all_test.py` holds every top-level module but `exceptions` to
+those names.
 
 ### The environment and the gates
 
@@ -404,7 +430,7 @@ hook green — a name ending in an underscore is a reference to a link
 target, and the fix is double backticks around it. `-n` turns an
 unresolved cross-reference into a warning for `-W` to fail on, and
 `conf.py`'s `intersphinx_mapping` is what resolves a reference into the
-standard library.
+standard library and into `ecc`.
 
 **Every job that installs from `uv.lock` passes `--locked`.** The jobs
 that do not are deliberate:
@@ -413,8 +439,8 @@ that do not are deliberate:
   and `deps-oldest.yml` calls `reusable-deps-oldest.yml`, which re-locks to
   the floors; neither commits the lock.
 - `pypi-install.yml` runs `pip install` to test the published release.
-- `test.yml`'s `dist` job smoke-tests the wheel with `uv pip install`; the
-  package has no runtime dependency, so it installs the wheel alone.
+- `test.yml`'s `dist` job smoke-tests the wheel with `uv pip install`,
+  which resolves the package's runtime dependencies from the index.
 - `uv build` and `uv run --no-project` install none of the project's
   dependencies.
 - The `dev-version` action re-locks after writing a rehearsal's version
@@ -521,11 +547,12 @@ uv pip install "$1"
 .venv/bin/python -c "
 from importlib.metadata import requires, version
 import coin_addresses
-from coin_addresses import exceptions
+from coin_addresses import evm, exceptions
 
 print(version('coin-addresses'), requires('coin-addresses'))
 assert coin_addresses.__version__ == version('coin-addresses')
 assert issubclass(exceptions.CoinAddressesValueError, ValueError)
+assert evm.is_valid_address('0x' + '0' * 40)
 "
 ```
 

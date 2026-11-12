@@ -16,14 +16,15 @@ and no signature.
 
 ## What is here
 
-No release is out yet, and this tree holds no address format: each
-arrives in a pull request of its own. The first release is to cover the
-coins on secp256k1: the bitcoin clones (Bitcoin Cash, Bitcoin SV,
-Bitcoin Gold, eCash, Litecoin, Dogecoin and Dash), the EVM chains with
-their EIP-55 checksum and a pure-Python Keccak-256, Tron, Cosmos and
-XRP. It is to build on [ecc](https://github.com/btclib-org/ecc) for the
-curve and on [base58-bech32](https://github.com/btclib-org/base58-bech32)
-for the encodings, and not on btclib.
+No release is out yet. `coin_addresses.evm` derives and validates the
+addresses of Ethereum and of the EVM chains, with their EIP-55 checksum,
+and each other format arrives in a pull request of its own. The first
+release is to cover the coins on secp256k1: the bitcoin clones (Bitcoin
+Cash, Bitcoin SV, Bitcoin Gold, eCash, Litecoin, Dogecoin and Dash), the
+EVM chains, Tron, Cosmos and XRP. It builds on
+[ecc](https://github.com/btclib-org/ecc) for the curve and is to build
+on [base58-bech32](https://github.com/btclib-org/base58-bech32) for the
+encodings, and not on btclib.
 [btclib-org/.github#2197](https://github.com/btclib-org/.github/issues/2197)
 records that decision and tracks the release; the later stages are
 [btclib-org/.github#2199](https://github.com/btclib-org/.github/issues/2199),
@@ -44,6 +45,20 @@ from coin_addresses.exceptions import (
 
 assert issubclass(CoinAddressesValueError, (CoinAddressesException, ValueError))
 assert issubclass(CoinAddressesTypeError, (CoinAddressesException, TypeError))
+```
+
+A public key, as a point or in its SEC encoding, compressed or not, gives
+its address, and an address handed over is checked:
+
+```python
+from coin_addresses import evm
+
+# the generator of secp256k1, the public key of the private key 1
+pub_key = "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"
+address = evm.address_from_pub_key(pub_key)
+assert address == "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf"
+assert evm.is_valid_address(address)
+assert not evm.is_valid_address(address.replace("E", "e", 1))
 ```
 
 `tests/readme_test.py` runs every Python block of this file, so the
