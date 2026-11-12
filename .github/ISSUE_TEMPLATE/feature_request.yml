@@ -1,0 +1,58 @@
+---
+name: Feature request
+description: Add something to coin-addresses, or change how it works
+type: Feature
+
+body:
+  - type: markdown
+    attributes:
+      value: >
+        coin-addresses takes a public key to the address a coin derives
+        from it, and validates an address. A transaction, a signature or
+        a wallet is a library above this one, and not this one.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What is missing
+      description: >
+        What it would let a caller do, and how the call would read.
+    validations:
+      required: true
+
+  - type: input
+    id: reference
+    attributes:
+      label: Specification
+      description: >
+        The standard, BIP, RFC or reference implementation that defines it.
+        What has no specification has no test vectors either, which is the
+        harder half of adding it.
+      placeholder: "EIP-55, https://eips.ethereum.org/EIPS/eip-55"
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it belongs in coin-addresses
+      description: >
+        What cannot be done today with what the package already exposes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: >
+        Other spellings of the same feature, and what an existing caller
+        would have to change if this were added.
+
+  - type: markdown
+    attributes:
+      value: >
+        **Sign-off.** Whoever takes this issue signs off every commit
+        (`git commit -s`). The required `Sign-off` check refuses a pull
+        request whose commits lack the `Signed-off-by:` trailer;
+        [`CONTRIBUTING.md`'s *Pull
+        requests*](https://github.com/btclib-org/.github/blob/main/CONTRIBUTING.md#pull-requests)
+        says why.

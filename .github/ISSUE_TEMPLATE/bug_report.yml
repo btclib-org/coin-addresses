@@ -1,0 +1,65 @@
+---
+name: Bug report
+description: Something in coin-addresses does not work as documented
+type: Bug
+
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: What you observed, and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce it
+      description: >
+        The shortest Python that shows it, and the full traceback if there
+        is one. The values that trigger it matter: paste the actual
+        string or bytes, and never a private key, a WIF or anything else
+        that guards funds.
+      render: python
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: coin-addresses version
+      description: >
+        `python -c "from importlib.metadata import version;
+        print(version('coin-addresses'))"`
+      placeholder: "2026.10"
+    validations:
+      required: true
+
+  - type: input
+    id: platform
+    attributes:
+      label: Platform and interpreter
+      description: >
+        `python -VV` and the operating system, architecture included.
+      placeholder: "CPython 3.14.0, macOS 26.0 arm64"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else
+      description: >
+        The standard or specification the behaviour should follow, a test
+        vector it disagrees with, and the version this last worked on.
+
+  - type: markdown
+    attributes:
+      value: >
+        **Sign-off.** Whoever takes this issue signs off every commit
+        (`git commit -s`). The required `Sign-off` check refuses a pull
+        request whose commits lack the `Signed-off-by:` trailer;
+        [`CONTRIBUTING.md`'s *Pull
+        requests*](https://github.com/btclib-org/.github/blob/main/CONTRIBUTING.md#pull-requests)
+        says why.
