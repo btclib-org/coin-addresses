@@ -3,9 +3,10 @@ name: deps-latest
 
 # what a Dependabot pull request would bring, asked before it arrives:
 # every dependency the resolver touches upgraded -- the tooling, and the
-# btclib the suite compares against -- then the suite, the lint gate and
-# the packaging checks against the result, and nothing committed. The pull request that
-# follows on Thursday is then a diff whose result is already known.
+# runtime dependencies pyproject.toml declares -- then the suite, the
+# lint gate and the packaging checks against the result, and nothing
+# committed. The pull request that follows on Thursday is then a diff
+# whose result is already known.
 #
 # The upgrade, the lint and the suite cells are btclib-org/.github's
 # reusable-deps-latest.yml, called at a tagged commit (section 10 of
