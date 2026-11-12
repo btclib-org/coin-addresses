@@ -9,6 +9,8 @@ encoding, and its compressed and uncompressed encodings give different
 addresses. The bitcoin clones' modules give the address of the
 compressed one, which BIP32 wallets derive, and refuse a key written
 uncompressed rather than answer an address its holder may not expect.
+The cosmos module does the same: a Cosmos address carries that hash, in
+bech32.
 
 A legacy address is the Base58Check of a version byte and a hash. The
 version byte says the coin and the script type; which ones a coin uses

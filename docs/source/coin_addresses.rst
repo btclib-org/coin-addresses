@@ -11,6 +11,13 @@ coin_addresses.bitcoin_cash module
    :members:
    :show-inheritance:
 
+coin_addresses.cosmos module
+----------------------------
+
+.. automodule:: coin_addresses.cosmos
+   :members:
+   :show-inheritance:
+
 coin_addresses.dogecoin module
 ------------------------------
 
