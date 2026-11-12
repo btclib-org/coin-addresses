@@ -38,6 +38,7 @@ handed.
 
 from __future__ import annotations
 
+from base58_bech32.base58 import BITCOIN_ALPHABET
 from base58_bech32.cashaddr import cashaddr_decode, cashaddr_encode
 from base58_bech32.exceptions import Base58Bech32ValueError
 from ecc.curves import PubKey
@@ -83,7 +84,7 @@ def legacy_address_from_pub_key(pub_key: PubKey) -> str:
     The key is read, and refused, as
     `coin_addresses._bitcoin.pub_key_hash` says.
     """
-    return base58_address(_P2PKH, pub_key_hash(pub_key))
+    return base58_address(_P2PKH, pub_key_hash(pub_key), alphabet=BITCOIN_ALPHABET)
 
 
 def _assert_valid_cashaddr(address: str) -> None:
@@ -111,7 +112,7 @@ def assert_valid_address(address: str) -> None:
     else:
         return
     try:
-        decode_base58_address(address, _LEGACY_SIZES)
+        decode_base58_address(address, _LEGACY_SIZES, alphabet=BITCOIN_ALPHABET)
     except CoinAddressesValueError as e:
         legacy = str(e)
     else:

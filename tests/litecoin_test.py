@@ -9,7 +9,7 @@ from __future__ import annotations
 import random
 
 import pytest
-from base58_bech32.base58 import b58decode_check
+from base58_bech32.base58 import BITCOIN_ALPHABET, b58decode_check
 from base58_bech32.bech32 import (
     BECH32_1_CONST,
     BECH32_M_CONST,
@@ -247,9 +247,9 @@ def _address_of_script(script: str) -> str:
     """Return the Litecoin address of a scriptPubKey, segwit in lower case."""
     octets = bytes.fromhex(script)
     if octets[:3] == b"\x76\xa9\x14":
-        return base58_address(48, octets[3:23])
+        return base58_address(48, octets[3:23], alphabet=BITCOIN_ALPHABET)
     if octets[:2] == b"\xa9\x14":
-        return base58_address(50, octets[2:22])
+        return base58_address(50, octets[2:22], alphabet=BITCOIN_ALPHABET)
     version = 0 if octets[0] == 0 else octets[0] - 0x50
     return litecoin._segwit_address(version, octets[2:])
 
@@ -301,10 +301,10 @@ def test_the_bitcoin_p2sh_version_byte_is_read() -> None:
     Litecoin Core reads it, and writes P2SH with 50, a leading M.
     """
     digest = bytes.fromhex("6d328a5b2a20d943a641c8d29b6cc3c2d2df85d3")
-    address = base58_address(5, digest)
+    address = base58_address(5, digest, alphabet=BITCOIN_ALPHABET)
     assert address.startswith("3")
     assert is_valid_address(address)
-    assert base58_address(50, digest) == _KEY_IO_VALID[1][0]
+    assert base58_address(50, digest, alphabet=BITCOIN_ALPHABET) == _KEY_IO_VALID[1][0]
 
 
 def test_the_three_script_types_hold_over_generated_keys() -> None:
@@ -339,12 +339,12 @@ def test_the_three_script_types_hold_over_generated_keys() -> None:
     [
         (
             # a P2PKH address whose hash is one byte short
-            base58_address(48, bytes(19)),
+            base58_address(48, bytes(19), alphabet=BITCOIN_ALPHABET),
             "19-byte hash for version byte 48",
         ),
         (
             # a Bitcoin P2PKH address
-            base58_address(0, bytes(20)),
+            base58_address(0, bytes(20), alphabet=BITCOIN_ALPHABET),
             "unknown version byte: 0",
         ),
         (

@@ -47,6 +47,7 @@ on:
           - bitcoin
           - tron
           - cosmos
+          - xrp
 
 # least privilege for the GITHUB_TOKEN: nothing here writes. No issues:
 # write either -- a survivor is a test to write rather than a defect to
@@ -86,7 +87,9 @@ jobs:
         {"profile": "Tron addresses", "slug": "tron", "ceiling": 25,
         "sessions": "tron.toml 15m"},
         {"profile": "Cosmos Hub addresses", "slug": "cosmos", "ceiling": 25,
-        "sessions": "cosmos.toml 15m"}]
+        "sessions": "cosmos.toml 15m"},
+        {"profile": "XRP Ledger addresses", "slug": "xrp", "ceiling": 25,
+        "sessions": "xrp.toml 15m"}]
       # the dropdown above, forwarded. A schedule has no `inputs`, so this
       # arrives at the callee as an empty string, which its own `SELECTED`
       # expression reads as every profile

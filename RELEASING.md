@@ -1138,7 +1138,7 @@ pkg=coin_addresses
 rtd=coin-addresses
 python=$(grep -Ev '^[[:space:]]*(#|$)' .python-version)
 smoke='from coin_addresses import bitcoin_cash, cosmos, dogecoin, evm, exceptions
-from coin_addresses import litecoin, tron
+from coin_addresses import litecoin, tron, xrp
 import coin_addresses; print(coin_addresses.__version__)'
 ```
 

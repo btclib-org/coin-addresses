@@ -15,7 +15,8 @@ harness. `CoinAddressesValueError` is what a validator refuses a string
 with, so it is caught below as the expected outcome; any other exception
 propagates to atheris as the finding it is.
 
-The seed corpus is one address of each format.
+The seed corpus holds an address of each format, and a second where a
+format has another shape: its case, its length or its leading zeros.
 """
 
 from __future__ import annotations
@@ -25,7 +26,7 @@ from typing import TYPE_CHECKING
 
 import atheris
 
-from coin_addresses import bitcoin_cash, cosmos, dogecoin, evm, litecoin, tron
+from coin_addresses import bitcoin_cash, cosmos, dogecoin, evm, litecoin, tron, xrp
 from coin_addresses.exceptions import CoinAddressesValueError
 
 if TYPE_CHECKING:
@@ -40,6 +41,7 @@ ENTRY_POINTS = (
     "coin_addresses.evm:is_valid_address",
     "coin_addresses.litecoin:is_valid_address",
     "coin_addresses.tron:is_valid_address",
+    "coin_addresses.xrp:is_valid_address",
 )
 
 
@@ -71,6 +73,7 @@ def fuzz_target(data: bytes) -> None:
     _agree(evm.is_valid_address(text), evm.assert_valid_address, text)
     _agree(litecoin.is_valid_address(text), litecoin.assert_valid_address, text)
     _agree(tron.is_valid_address(text), tron.assert_valid_address, text)
+    _agree(xrp.is_valid_address(text), xrp.assert_valid_address, text)
 
 
 def main() -> None:

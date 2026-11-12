@@ -23,6 +23,7 @@ handed.
 
 from __future__ import annotations
 
+from base58_bech32.base58 import BITCOIN_ALPHABET
 from ecc.curves import PubKey
 
 from coin_addresses._bitcoin import (
@@ -51,7 +52,7 @@ def address_from_pub_key(pub_key: PubKey) -> str:
     The key is read, and refused, as
     `coin_addresses._bitcoin.pub_key_hash` says.
     """
-    return base58_address(_P2PKH, pub_key_hash(pub_key))
+    return base58_address(_P2PKH, pub_key_hash(pub_key), alphabet=BITCOIN_ALPHABET)
 
 
 def assert_valid_address(address: str) -> None:
@@ -62,7 +63,7 @@ def assert_valid_address(address: str) -> None:
     a `CoinAddressesValueError`.
     """
     assert_string(address)
-    decode_base58_address(address, _SIZES)
+    decode_base58_address(address, _SIZES, alphabet=BITCOIN_ALPHABET)
 
 
 def is_valid_address(address: str) -> bool:

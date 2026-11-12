@@ -9,7 +9,7 @@ from __future__ import annotations
 import random
 
 import pytest
-from base58_bech32.base58 import b58decode_check
+from base58_bech32.base58 import BITCOIN_ALPHABET, b58decode_check
 from ecc.curves import PreparedPoint, bytes_from_point, mult, secp256k1
 
 from coin_addresses import evm
@@ -126,7 +126,10 @@ def test_a_key_gives_the_address_another_library_derives(
 ) -> None:
     """The derivation, against an independent one, and the decoding."""
     assert address_from_pub_key(pub_key) == address
-    assert base58_address(_PREFIX, bytes.fromhex(digest)) == address
+    assert (
+        base58_address(_PREFIX, bytes.fromhex(digest), alphabet=BITCOIN_ALPHABET)
+        == address
+    )
     assert_valid_address(address)
 
 
@@ -173,9 +176,15 @@ def test_the_derivation_holds_over_generated_keys() -> None:
 @pytest.mark.parametrize(
     "address, reason",
     [
-        (base58_address(_PREFIX, bytes(32)), "32-byte hash for version byte 65"),
+        (
+            base58_address(_PREFIX, bytes(32), alphabet=BITCOIN_ALPHABET),
+            "32-byte hash for version byte 65",
+        ),
         # bitcoin's P2PKH version byte, before the 20 bytes of an address
-        (base58_address(0, bytes(20)), "unknown version byte: 0"),
+        (
+            base58_address(0, bytes(20), alphabet=BITCOIN_ALPHABET),
+            "unknown version byte: 0",
+        ),
         ("0OIl", "Base58 string contains invalid characters"),
     ],
 )

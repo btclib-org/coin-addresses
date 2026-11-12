@@ -1,0 +1,19 @@
+# XRP Ledger classic addresses, mutated: the type prefix, the hash length,
+# the Ed25519 refusal and is_valid_address's answer. A type prefix or hash
+# size moved refuses every account, and may validate a string of another
+# prefix or length as one.
+
+[cosmic-ray]
+module-path = [
+    "src/coin_addresses/xrp.py",
+]
+
+test-command = """python -m pytest -x -q -p no:randomly \
+  tests/xrp_test.py"""
+
+timeout = 300
+
+excluded-modules = []
+
+[cosmic-ray.distributor]
+name = "local"
