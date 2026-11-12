@@ -55,8 +55,11 @@ except PackageNotFoundError:
     __version__ = "unknown"
 
 __all__ = [
+    "bitcoin_cash",
+    "dogecoin",
     "evm",
     "exceptions",
+    "litecoin",
 ]
 
 

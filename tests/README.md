@@ -51,9 +51,9 @@ Not tested here: the build system; the suite opens no socket.
 
 The properties are hand-rolled rather than hypothesis's, each over
 inputs a `random.Random` draws from a seed fixed in its module, so that
-two runs ask the same: `keccak_test.py` compares OpenSSL's Keccak-256
-with the pure-Python one, and `evm_test.py` holds derived addresses and
-near-addresses to the validation. Section 7's *Property tests* asks a
-tree answering the property this way to say so here.
+two runs ask the same: `keccak_test.py` and `ripemd160_test.py` compare
+OpenSSL's hash with the pure-Python one, and the test module of each
+coin holds derived addresses to the validation. Section 7's *Property
+tests* asks a tree answering the property this way to say so here.
 
 [std]: https://github.com/btclib-org/.github/blob/main/README.md
