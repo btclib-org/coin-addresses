@@ -2,7 +2,7 @@
 # Distributed under the MIT software license, see the accompanying
 # LICENSE file or https://opensource.org/license/mit for the full text.
 
-"""Tests for Litecoin addresses: the three script types, the validation."""
+"""Tests for Litecoin addresses: each script type, the validation."""
 
 from __future__ import annotations
 

@@ -14,18 +14,26 @@ the same last change, as `btclib._ripemd160`.
 The module is private: `coin_addresses._hashes` decides when it is
 called, and a hash function is not among what the package publishes.
 
-Five deltas from upstream, every one of them a gate of this repository and
-none of them arithmetic:
+The deltas from upstream, none of them arithmetic:
 
-- type annotations, mypy running strict here
+- this tree's copyright header, which ruff's missing-copyright-notice
+  asks for, and this module docstring, which carries upstream's
+  attribution, in place of upstream's
+- an empty `__all__`, which CONTRIBUTING.md's "The public surface" asks
+  of every module, and the import of CoinAddressesValueError
+- type annotations, mypy running strict here, and
+  `from __future__ import annotations`
+- `fi`'s docstring in the imperative (pydocstyle D401)
 - `fi` raises CoinAddressesValueError where upstream has `assert False`:
   ruff's S101 forbids assert outside tests, and the round number is worth
   naming
 - `if` in place of the `elif` after a return (ruff RET505)
 - the unittest.TestCase is dropped, its vectors moved to
   tests/ripemd160_test.py: test code does not ship inside the package
-- `# fmt: off` around the six tables, which ruff format would otherwise
-  print one index per line
+- ruff format's spelling: double quotes, upper-case hex digits, spaces
+  around a slice's colon and operators, a signature wrapped
+- `# fmt: off` around the tables, which ruff format would otherwise print
+  one index per line
 """
 
 from __future__ import annotations

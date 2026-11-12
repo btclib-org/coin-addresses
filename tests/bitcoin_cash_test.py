@@ -747,9 +747,9 @@ def test_an_invalid_string_of_bitcoin_cash_node_is_refused(address: str) -> None
 def test_the_derivation_holds_over_generated_keys() -> None:
     """A property over keys from a fixed seed.
 
-    The two addresses of each key are valid and carry one hash, and a
-    point, its compressed encoding and a prepared point give the same
-    addresses.
+    The CashAddr and legacy addresses of each key are valid and carry one
+    hash, and a point, its compressed encoding and a prepared point give
+    the same addresses.
     """
     rng = random.Random(_SEED)
     for _ in range(16):

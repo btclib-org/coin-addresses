@@ -5,10 +5,10 @@
 """What the bitcoin clones take from Bitcoin: the key hash and Base58Check.
 
 A pay-to-public-key-hash address carries the HASH160 of the key's SEC
-encoding. A key has two encodings, and so two such addresses: the coin
-modules give the address of the compressed one, which BIP32 wallets
-derive, and refuse a key written uncompressed rather than answer an
-address its holder may not expect.
+encoding, and its compressed and uncompressed encodings give different
+addresses. The coin modules give the address of the compressed one,
+which BIP32 wallets derive, and refuse a key written uncompressed rather
+than answer an address its holder may not expect.
 
 A legacy address is the Base58Check of a version byte and a hash. The
 version byte says the coin and the script type; which ones a coin uses

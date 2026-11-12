@@ -48,10 +48,8 @@ _SIZES = {_P2PKH: (20,), _P2SH: (20,)}
 def address_from_pub_key(pub_key: PubKey) -> str:
     """Return the P2PKH address of a secp256k1 public key.
 
-    The key is read as `coin_addresses._bitcoin` says: a point, or its
-    compressed SEC encoding, as bytes or as hex. A value of no type a key
-    has is a `CoinAddressesTypeError`, and one that is no point of the
-    curve, or is written uncompressed, a `CoinAddressesValueError`.
+    The key is read, and refused, as
+    `coin_addresses._bitcoin.pub_key_hash` says.
     """
     return base58_address(_P2PKH, pub_key_hash(pub_key))
 

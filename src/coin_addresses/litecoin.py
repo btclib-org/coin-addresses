@@ -11,9 +11,9 @@ reads P2SH written with Bitcoin's 5, a leading 3. A segwit address is
 BIP173's bech32, or BIP350's bech32m from witness version 1, with the
 HRP `ltc`.
 
-A key has three addresses, which `address_from_pub_key`'s `script_type`
-names: "p2pkh", "p2sh-p2wpkh", the P2SH of the version 0 witness program
-of the key hash, and "p2wpkh", that witness program as a segwit address.
+`address_from_pub_key`'s `script_type` names the address a key gives:
+"p2pkh", "p2sh-p2wpkh", the P2SH of the version 0 witness program of the
+key hash, or "p2wpkh", that witness program as a segwit address.
 `coin_addresses._bitcoin` says which encoding of the key is hashed.
 
 The version bytes and the HRP are `CMainParams`'s, the encodings are
@@ -27,6 +27,13 @@ legacy address, which `coin_addresses._bitcoin` says is refused:
 
 That function also reads an MWEB stealth address, HRP `ltcmweb`, which
 no single public key gives: validation here refuses it.
+
+A segwit address of witness version 1, such as a P2TR one, is valid as
+`DecodeDestination` reads it, and no key here gives one: Litecoin Core's
+wallet derives none, its `OutputType` being legacy, P2SH-segwit, bech32
+and MWEB:
+
+- https://github.com/litecoin-project/litecoin/blob/ec1b6489a900d09cf5991e220dce089c77a232a2/src/outputtype.h#L18-L23
 
 A refusal names what is wrong, never the address or the key it was
 handed.
@@ -85,11 +92,8 @@ def address_from_pub_key(pub_key: PubKey, *, script_type: str = "p2pkh") -> str:
 
     `script_type` is "p2pkh", "p2sh-p2wpkh" or "p2wpkh", as the module's
     docstring says; another string is a `CoinAddressesValueError`, and a
-    non-string a `CoinAddressesTypeError`. The key is read as
-    `coin_addresses._bitcoin` says: a point, or its compressed SEC
-    encoding, as bytes or as hex. A value of no type a key has is a
-    `CoinAddressesTypeError`, and one that is no point of the curve, or
-    is written uncompressed, a `CoinAddressesValueError`.
+    non-string a `CoinAddressesTypeError`. The key is read, and refused,
+    as `coin_addresses._bitcoin.pub_key_hash` says.
     """
     if not isinstance(script_type, str):
         raise CoinAddressesTypeError(
