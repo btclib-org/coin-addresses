@@ -411,6 +411,9 @@ wheels = [
 name = "coin-addresses"
 version = "2026.11"
 source = { editable = "." }
+dependencies = [
+    { name = "ecc" },
+]
 
 [package.dev-dependencies]
 check = [
@@ -464,6 +467,7 @@ test = [
 ]
 
 [package.metadata]
+requires-dist = [{ name = "ecc", specifier = ">=2026.11.12" }]
 
 [package.metadata.requires-dev]
 check = [
@@ -709,6 +713,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ae/b6/03bb70946330e88ffec97aefd3ea75ba575cb2e762061e0e62a213befee8/docutils-0.22.4.tar.gz", hash = "sha256:4db53b1fde9abecbb74d91230d32ab626d94f6badfc575d6db9194a49df29968", size = 2291750, upload-time = "2025-12-18T19:00:26.443Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/02/10/5da547df7a391dcde17f59520a231527b8571e6f46fc8efb02ccb370ab12/docutils-0.22.4-py3-none-any.whl", hash = "sha256:d0013f540772d1420576855455d050a2180186c91c15779301ac2ccb3eeb68de", size = 633196, upload-time = "2025-12-18T19:00:18.077Z" },
+]
+
+[[package]]
+name = "ecc"
+version = "2026.11.12"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/12/8a/db2759943f6bd0f950544624f7f205f508fcb1a2c275bc25fc9c3d21a427/ecc-2026.11.12.tar.gz", hash = "sha256:86b861a568ca048d01f13209932f006c5ae9590c713e8bcc154fbcc617154aff", size = 2181315, upload-time = "2026-11-12T08:14:32.064Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/03/18/658f24e9771eccb2995506da9e277056c248b93ed73bba66c9cd8a598382/ecc-2026.11.12-py3-none-any.whl", hash = "sha256:cfb115c41b08e96e1d4a9501c469096c750afa796d58321da3949217ccca8700", size = 311451, upload-time = "2026-11-12T08:14:30.022Z" },
 ]
 
 [[package]]

@@ -28,10 +28,11 @@ license = "MIT"
 license-files = ["LICENSE", "AUTHORS.md"]
 authors = [{ name = "The btclib developers", email = "devs@btclib.org" }]
 requires-python = ">=3.11"
-# none yet: what the package ships imports the standard library alone,
-# which tests/imports_test.py asserts of every module. The pull request
-# whose code first imports a sibling package declares it here
-dependencies = []
+# the sibling packages this one builds on, and nothing else:
+# tests/imports_test.py refuses a module that loads a package these and
+# their own requirements do not name. `ecc` parses a public key from a
+# point or its SEC encoding, compressed or not
+dependencies = ["ecc>=2026.11.12"]
 keywords = [
     # the repository's topics, entry for entry
     "cryptocurrency",

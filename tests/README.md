@@ -40,12 +40,25 @@ is true.
 | the documentation | `docs_test.py` |
 | the import graph | `imports_test.py` |
 | the changelog | `release_notes_test.py` |
+| the calling convention | `keyword_only_test.py` |
+| the calling convention | `name_contract_test.py` |
+| the calling convention | `private_defaults_test.py` |
+| input validation | `input_validation_test.py` |
 
-Not tested here: the build system; the calling convention; input
-validation; the suite opens no socket.
+Not tested here: the build system; the suite opens no socket.
 
-The calling convention and input validation have no subject yet: the
-package declares no public function. Each arrives with the pull request
-that adds the first function it reads.
+The calling convention takes three modules because it is three rules --
+a keyword-only parameter stays keyword-only, a private signature carries
+no default, and a public name promises what the call answers -- and
+section 7 states it as one bullet.
+
+## Property tests
+
+The properties are hand-rolled rather than hypothesis's, each over
+inputs a `random.Random` draws from a seed fixed in its module, so that
+two runs ask the same: `keccak_test.py` compares OpenSSL's Keccak-256
+with the pure-Python one, and `evm_test.py` holds derived addresses and
+near-addresses to the validation. Section 7's *Property tests* asks a
+tree answering the property this way to say so here.
 
 [std]: https://github.com/btclib-org/.github/blob/main/README.md

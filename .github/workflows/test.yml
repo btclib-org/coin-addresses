@@ -265,11 +265,12 @@ jobs:
           .venv/bin/python -c "
           from importlib.metadata import requires, version
           import coin_addresses
-          from coin_addresses import exceptions
+          from coin_addresses import evm, exceptions
 
           print(version('coin-addresses'), requires('coin-addresses'))
           assert coin_addresses.__version__ == version('coin-addresses')
           assert issubclass(exceptions.CoinAddressesValueError, ValueError)
+          assert evm.is_valid_address('0x' + '0' * 40)
           "
       # the suite as the sdist ships it, unpacked outside the checkout and
       # gated at 100% on the interpreter the coverage job pins. A shipped
