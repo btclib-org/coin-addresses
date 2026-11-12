@@ -439,6 +439,9 @@ that do not are deliberate:
   and `deps-oldest.yml` calls `reusable-deps-oldest.yml`, which re-locks to
   the floors; neither commits the lock.
 - `pypi-install.yml` runs `pip install` to test the published release.
+- `fuzz.yml`'s ClusterFuzzLite build installs
+  `.clusterfuzzlite/requirements.txt`, the lock exported with its hashes by
+  the `uv-export` hook, with `pip3 install --require-hashes`.
 - `test.yml`'s `dist` job smoke-tests the wheel with `uv pip install`,
   which resolves the package's runtime dependencies from the index.
 - `uv build` and `uv run --no-project` install none of the project's
@@ -467,6 +470,33 @@ command selects — `.venv-3.11` for `--python 3.11`, `.venv-pypy3.11` for
 `--python pypy3.11`.** Without it, `uv run --python <version>` removes
 `.venv`, builds it again on that interpreter and with that command's own
 group set, and leaves it there. `uv sync` restores it.
+
+### A Dependabot `uv` pull request
+
+Dependabot's `uv` ecosystem rewrites `uv.lock` alone. Where a bump moves a
+package that `.clusterfuzzlite/requirements.txt` pins, the `uv-export`
+hook fails the lint job. An owner, as [`GOVERNANCE.md`][governance] names them,
+then commits the hook's output to the pull request's branch before it
+lands, signed and signed off. On a checkout of that branch:
+
+```shell
+uv run --locked --only-group lint pre-commit run uv-export --all-files
+git commit -S -s -m "Export .clusterfuzzlite/requirements.txt from uv.lock" \
+    .clusterfuzzlite/requirements.txt
+git push origin HEAD:<branch>
+```
+
+The hook exits 1 when it rewrites the file. The push is a plain one, never
+a force, so a branch that moved meanwhile refuses it.
+
+The commit is made by hand, not by a bot: the `ci:` block of
+`.pre-commit-config.yaml` says why.
+
+The cost is that Dependabot stops rebasing a pull request once extra
+commits have been pushed to it, as
+[GitHub's documentation](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/manage-your-dependency-security/manage-dependabot-prs#allowing-dependabot-to-rebase-and-force-push-over-extra-commits)
+says. `@dependabot recreate` in a comment rebuilds the branch without the
+commit, which is then made again.
 
 ### The editor
 
@@ -641,6 +671,8 @@ which is the reliance `REVIEWING.md` provides for.
 | `deps-oldest` | weekly | the floor interpreter, dependencies at their floors |
 | `scorecard` | weekly, push to main | — |
 | `links` | weekly | — |
+| `mutation` | weekly | the `.github/mutation/` profiles |
+| `fuzz` | weekly | — |
 | `pypi-install` | weekly, a release | what PyPI serves |
 | `sdist-rebuild` | weekly | the latest release's sdist, rebuilt |
 | `release` | a tag, and a rehearsal | the workflows it calls |
@@ -659,6 +691,33 @@ organization may run at once, and `REPOSITORY.md`'s *Plan-gated settings*
 records that ceiling. `verified-signatures.yml` reports after each push to
 `main` whether every commit pushed is `verified`; [the standard's
 *Signatures*][s-sigs] has the rule.
+
+### Mutation testing
+
+`mutation.yml` asks the question coverage cannot: a line the suite executes
+is not a line the suite checks. It gates nothing and runs weekly, through
+`btclib-org/.github`'s `reusable-mutation.yml`; each file under
+`.github/mutation/` is one session, its header saying what it mutates.
+One session, by hand:
+
+```shell
+uv run --locked --no-default-groups --group test --group mutation \
+    cosmic-ray baseline .github/mutation/evm.toml
+uv run --locked --no-default-groups --group test --group mutation \
+    cosmic-ray init .github/mutation/evm.toml evm.sqlite
+uv run --locked --no-default-groups --group test --group mutation \
+    cr-filter-operators evm.sqlite .github/mutation/evm.toml
+uv run --locked --no-default-groups --group test --group mutation \
+    cosmic-ray exec .github/mutation/evm.toml evm.sqlite
+uv run --locked --no-default-groups --group test --group mutation \
+    cr-report --surviving-only --show-diff evm.sqlite
+```
+
+The session writes each mutation into the source and restores it
+afterwards, so nothing else may read the tree while it runs.
+
+Where a session's `test-command` runs part of the suite, a mutant it lets
+live is a gap only once the whole suite lets it live too.
 
 ### The secrets baseline
 

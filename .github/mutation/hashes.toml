@@ -1,0 +1,22 @@
+# Keccak-256 and RIPEMD-160, mutated: the pure-Python permutation and
+# compression with their padding, and the choice between OpenSSL's hash and
+# the pure-Python one. A constant off by one is a digest wrong for nearly
+# every input, and a choice inverted is a hash taken from the other
+# implementation.
+
+[cosmic-ray]
+module-path = [
+    "src/coin_addresses/_keccak.py",
+    "src/coin_addresses/_ripemd160.py",
+    "src/coin_addresses/_hashes.py",
+]
+
+test-command = """python -m pytest -x -q -p no:randomly \
+  tests/keccak_test.py tests/ripemd160_test.py"""
+
+timeout = 300
+
+excluded-modules = []
+
+[cosmic-ray.distributor]
+name = "local"

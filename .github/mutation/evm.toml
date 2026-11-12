@@ -1,0 +1,21 @@
+# Ethereum addresses, mutated: the 20 bytes taken off the Keccak-256 of the
+# public key, which Tron's addresses carry too, and the EIP-55 checksum read
+# off the case of each hex digit.
+# A checksum read off the wrong nibble refuses a valid address or accepts a
+# mistyped one.
+
+[cosmic-ray]
+module-path = [
+    "src/coin_addresses/_ethereum.py",
+    "src/coin_addresses/evm.py",
+]
+
+test-command = """python -m pytest -x -q -p no:randomly \
+  tests/evm_test.py tests/tron_test.py"""
+
+timeout = 300
+
+excluded-modules = []
+
+[cosmic-ray.distributor]
+name = "local"

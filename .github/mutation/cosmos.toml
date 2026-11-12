@@ -1,0 +1,18 @@
+# Cosmos Hub addresses, mutated: the HRP, the bech32 reading and the
+# bounds on the address bytes. A bound off by one is an address of a length
+# the SDK refuses that validates here, or one it takes that is refused.
+
+[cosmic-ray]
+module-path = [
+    "src/coin_addresses/cosmos.py",
+]
+
+test-command = """python -m pytest -x -q -p no:randomly \
+  tests/cosmos_test.py"""
+
+timeout = 300
+
+excluded-modules = []
+
+[cosmic-ray.distributor]
+name = "local"
