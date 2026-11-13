@@ -100,21 +100,13 @@ HRP `cosmos`, and an address with another chain's HRP is refused:
 
 ```python
 from coin_addresses import cosmos
-from coin_addresses.exceptions import CoinAddressesValueError
 
 pub_key = "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"
 address = cosmos.address_from_pub_key(pub_key)
 assert address == "cosmos1w508d6qejxtdg4y5r3zarvary0c5xw7k6ah60c"
 assert cosmos.is_valid_address(address)
-# the same bytes with Osmosis's HRP: a valid bech32 string, refused for
-# its HRP alone
-osmosis = "osmo1w508d6qejxtdg4y5r3zarvary0c5xw7kjxy2e2"
-try:
-    cosmos.assert_valid_address(osmosis)
-except CoinAddressesValueError as e:
-    assert str(e) == "not the Cosmos HRP"
-else:
-    raise AssertionError(osmosis)
+# the same bytes with Osmosis's HRP
+assert not cosmos.is_valid_address("osmo1w508d6qejxtdg4y5r3zarvary0c5xw7kjxy2e2")
 ```
 
 An XRP Ledger classic address carries the bytes of a Bitcoin P2PKH
