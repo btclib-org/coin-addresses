@@ -324,11 +324,11 @@ wheels = [
 
 [[package]]
 name = "base58-bech32"
-version = "2026.11.12"
+version = "2026.11.14"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/eb/95/f4e172008b7457777b1e4a242584d7f0372e7c373f199fec2a2ba1e2b93b/base58_bech32-2026.11.12.tar.gz", hash = "sha256:ce5c53698925e64f34fc56dfd3619193662798fd13d3458237e08a0d4305be3e", size = 586911, upload-time = "2026-11-12T02:33:55.585Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a5/ac/c043c103456b414dfc5247e656b1232e72c396883bcf31587cb8e6fb30e9/base58_bech32-2026.11.14.tar.gz", hash = "sha256:246b9ec93b4e3c4305f8e21752a1b68e88b2deaa9895d553180dd0e1abc8970f", size = 603371, upload-time = "2026-11-13T23:13:05.5Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/15/8d/e3d0ec7801c9a28a1394ba094483081988dfbb60ce737e8849c7b3318f00/base58_bech32-2026.11.12-py3-none-any.whl", hash = "sha256:355580ddd883a94da6176ab05ebf638257e4f457c0ba2d1a452028ae976c7a3c", size = 29808, upload-time = "2026-11-12T02:33:53.508Z" },
+    { url = "https://files.pythonhosted.org/packages/15/36/77b5795cdde31af4b6461315342e4221a5bdbe61192116c1b7b17b8a1c62/base58_bech32-2026.11.14-py3-none-any.whl", hash = "sha256:352a968c77fc284ec9698fb70c8447294a5c5203a4a756109f1f9a2056360bf0", size = 33149, upload-time = "2026-11-13T23:13:04.145Z" },
 ]
 
 [[package]]
@@ -679,7 +679,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "base58-bech32", specifier = ">=2026.11.12" },
+    { name = "base58-bech32", specifier = ">=2026.11.14" },
     { name = "ecc", specifier = ">=2026.11.12" },
 ]
 

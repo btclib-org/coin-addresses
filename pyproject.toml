@@ -32,9 +32,9 @@ requires-python = ">=3.11"
 # tests/imports_test.py refuses a module that loads a package these and
 # their own requirements do not name. `ecc` parses a public key from a
 # point or its SEC encoding, compressed or not, and `base58-bech32` is the
-# Base58, Base58Check, bech32 and CashAddr codec
+# Base58, Base58Check, bech32, CashAddr and strkey codec
 dependencies = [
-    "base58-bech32>=2026.11.12",
+    "base58-bech32>=2026.11.14",
     "ecc>=2026.11.12",
 ]
 keywords = [

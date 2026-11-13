@@ -1,0 +1,19 @@
+# Stellar account addresses, mutated: the version bytes of an account and
+# of a muxed account, the size of a key, and is_valid_address's answer. A
+# version byte moved refuses every account, and may validate a strkey of
+# another type as one.
+
+[cosmic-ray]
+module-path = [
+    "src/coin_addresses/stellar.py",
+]
+
+test-command = """python -m pytest -x -q -p no:randomly \
+  tests/stellar_test.py"""
+
+timeout = 300
+
+excluded-modules = []
+
+[cosmic-ray.distributor]
+name = "local"

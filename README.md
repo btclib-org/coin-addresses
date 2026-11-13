@@ -25,8 +25,9 @@ of the EVM chains, with their EIP-55 checksum;
 those of Tron, `coin_addresses.cosmos` those of the Cosmos Hub, and
 `coin_addresses.xrp` the classic addresses of the XRP Ledger. These are
 the coins on secp256k1 of the first stage.
-`coin_addresses.solana` gives the addresses of Solana, a coin on ed25519
-of the second stage. It builds on
+`coin_addresses.solana` gives the addresses of Solana and
+`coin_addresses.stellar` the account addresses of Stellar, coins on
+ed25519 of the second stage. It builds on
 [ecc](https://github.com/btclib-org/ecc) for the curve and on
 [base58-bech32](https://github.com/btclib-org/base58-bech32) for the
 encodings, and not on btclib.
@@ -167,6 +168,23 @@ assert solana.is_valid_address(address)
 assert solana.address_from_pub_key(bytes(32)) == "1" * 32
 # a program derived address of solana-sdk's tests
 assert solana.is_valid_address("BwqrghZA2htAcqq8dzP1WDAhTXYTYWj7CHxF5j7TDBAe")
+```
+
+A Stellar account address is the strkey of an ed25519 public key: its
+32 bytes in base-32, after a version byte and with a checksum. A muxed
+account, `M...`, is refused:
+
+```python
+from coin_addresses import stellar
+
+# the key of SEP-0023's tests
+pub_key = "3f0c34bf93ad0d9971d04ccc90f705511c838aad9734a4a2fb0d7a03fc7fe89a"
+address = stellar.address_from_pub_key(pub_key)
+assert address == "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ"
+assert stellar.is_valid_address(address)
+# SEP-0023's muxed account of the same key, with the id 0
+muxed = "MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAAAACJUQ"
+assert not stellar.is_valid_address(muxed)
 ```
 
 `tests/readme_test.py` runs every Python block of this file, so the
