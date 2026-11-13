@@ -82,7 +82,7 @@ jobs:
         "sessions": "hashes.toml 15m"},
         {"profile": "Ethereum addresses", "slug": "evm", "ceiling": 25,
         "sessions": "evm.toml 15m"},
-        {"profile": "Bitcoin Cash, Litecoin and Dogecoin addresses", "slug": "bitcoin",
+        {"profile": "Bitcoin clone addresses", "slug": "bitcoin",
         "ceiling": 25, "sessions": "bitcoin.toml 15m"},
         {"profile": "Tron addresses", "slug": "tron", "ceiling": 25,
         "sessions": "tron.toml 15m"},

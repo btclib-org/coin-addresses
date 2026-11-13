@@ -1,19 +1,25 @@
-# Bitcoin Cash, Litecoin and Dogecoin addresses, mutated: the version bytes
-# and hash lengths of the Base58Check addresses they share, the CashAddr
-# types, and Litecoin's segwit programs. A version byte compared with the
-# wrong coin's is an address that validates for a chain it was not written
-# for.
+# The bitcoin clones' addresses, mutated: the version bytes and hash
+# lengths of the Base58Check addresses they share, the CashAddr prefixes
+# and types, and the segwit HRPs and programs. A version byte compared
+# with the wrong coin's is an address that validates for a chain it was
+# not written for.
 
 [cosmic-ray]
 module-path = [
     "src/coin_addresses/_bitcoin.py",
     "src/coin_addresses/bitcoin_cash.py",
-    "src/coin_addresses/litecoin.py",
+    "src/coin_addresses/bitcoin_gold.py",
+    "src/coin_addresses/bitcoin_sv.py",
+    "src/coin_addresses/dash.py",
     "src/coin_addresses/dogecoin.py",
+    "src/coin_addresses/ecash.py",
+    "src/coin_addresses/litecoin.py",
 ]
 
 test-command = """python -m pytest -x -q -p no:randomly \
-  tests/bitcoin_cash_test.py tests/litecoin_test.py tests/dogecoin_test.py"""
+  tests/bitcoin_cash_test.py tests/bitcoin_gold_test.py \
+  tests/bitcoin_sv_test.py tests/dash_test.py tests/dogecoin_test.py \
+  tests/ecash_test.py tests/litecoin_test.py"""
 
 timeout = 300
 

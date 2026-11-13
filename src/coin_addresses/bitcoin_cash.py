@@ -39,12 +39,13 @@ handed.
 from __future__ import annotations
 
 from base58_bech32.base58 import BITCOIN_ALPHABET
-from base58_bech32.cashaddr import cashaddr_decode, cashaddr_encode
+from base58_bech32.cashaddr import cashaddr_encode
 from base58_bech32.exceptions import Base58Bech32ValueError
 from ecc.curves import PubKey
 
 from coin_addresses._bitcoin import (
     assert_string,
+    assert_valid_cashaddr,
     base58_address,
     decode_base58_address,
     pub_key_hash,
@@ -87,16 +88,6 @@ def legacy_address_from_pub_key(pub_key: PubKey) -> str:
     return base58_address(_P2PKH, pub_key_hash(pub_key), alphabet=BITCOIN_ALPHABET)
 
 
-def _assert_valid_cashaddr(address: str) -> None:
-    """Refuse a string that is not a Bitcoin Cash CashAddr address."""
-    _, kind, digest = cashaddr_decode(address, prefix=_PREFIX)
-    if kind not in _CASHADDR_SIZES:
-        raise CoinAddressesValueError(f"unknown CashAddr type: {kind}")
-    if len(digest) not in _CASHADDR_SIZES[kind]:
-        err_msg = f"{len(digest)}-byte hash for CashAddr type {kind}"
-        raise CoinAddressesValueError(err_msg)
-
-
 def assert_valid_address(address: str) -> None:
     """Refuse a string that is not a Bitcoin Cash address.
 
@@ -106,7 +97,7 @@ def assert_valid_address(address: str) -> None:
     """
     assert_string(address)
     try:
-        _assert_valid_cashaddr(address)
+        assert_valid_cashaddr(address, prefix=_PREFIX, sizes=_CASHADDR_SIZES)
     except (CoinAddressesValueError, Base58Bech32ValueError) as e:
         cashaddr = str(e)
     else:

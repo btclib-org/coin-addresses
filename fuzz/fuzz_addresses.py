@@ -26,7 +26,19 @@ from typing import TYPE_CHECKING
 
 import atheris
 
-from coin_addresses import bitcoin_cash, cosmos, dogecoin, evm, litecoin, tron, xrp
+from coin_addresses import (
+    bitcoin_cash,
+    bitcoin_gold,
+    bitcoin_sv,
+    cosmos,
+    dash,
+    dogecoin,
+    ecash,
+    evm,
+    litecoin,
+    tron,
+    xrp,
+)
 from coin_addresses.exceptions import CoinAddressesValueError
 
 if TYPE_CHECKING:
@@ -36,8 +48,12 @@ if TYPE_CHECKING:
 # loading this module under a stand-in atheris
 ENTRY_POINTS = (
     "coin_addresses.bitcoin_cash:is_valid_address",
+    "coin_addresses.bitcoin_gold:is_valid_address",
+    "coin_addresses.bitcoin_sv:is_valid_address",
     "coin_addresses.cosmos:is_valid_address",
+    "coin_addresses.dash:is_valid_address",
     "coin_addresses.dogecoin:is_valid_address",
+    "coin_addresses.ecash:is_valid_address",
     "coin_addresses.evm:is_valid_address",
     "coin_addresses.litecoin:is_valid_address",
     "coin_addresses.tron:is_valid_address",
@@ -68,8 +84,12 @@ def fuzz_target(data: bytes) -> None:
     """
     text = data.decode("utf-8", errors="replace")
     _agree(bitcoin_cash.is_valid_address(text), bitcoin_cash.assert_valid_address, text)
+    _agree(bitcoin_gold.is_valid_address(text), bitcoin_gold.assert_valid_address, text)
+    _agree(bitcoin_sv.is_valid_address(text), bitcoin_sv.assert_valid_address, text)
     _agree(cosmos.is_valid_address(text), cosmos.assert_valid_address, text)
+    _agree(dash.is_valid_address(text), dash.assert_valid_address, text)
     _agree(dogecoin.is_valid_address(text), dogecoin.assert_valid_address, text)
+    _agree(ecash.is_valid_address(text), ecash.assert_valid_address, text)
     _agree(evm.is_valid_address(text), evm.assert_valid_address, text)
     _agree(litecoin.is_valid_address(text), litecoin.assert_valid_address, text)
     _agree(tron.is_valid_address(text), tron.assert_valid_address, text)

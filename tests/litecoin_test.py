@@ -18,8 +18,7 @@ from base58_bech32.bech32 import (
 )
 from ecc.curves import PreparedPoint, bytes_from_point, mult, secp256k1
 
-from coin_addresses import litecoin
-from coin_addresses._bitcoin import base58_address
+from coin_addresses._bitcoin import base58_address, segwit_address
 from coin_addresses.exceptions import CoinAddressesTypeError, CoinAddressesValueError
 from coin_addresses.litecoin import (
     address_from_pub_key,
@@ -251,7 +250,7 @@ def _address_of_script(script: str) -> str:
     if octets[:2] == b"\xa9\x14":
         return base58_address(50, octets[2:22], alphabet=BITCOIN_ALPHABET)
     version = 0 if octets[0] == 0 else octets[0] - 0x50
-    return litecoin._segwit_address(version, octets[2:])
+    return segwit_address(version, octets[2:], hrp="ltc", limit=90)
 
 
 @pytest.mark.parametrize("wif, address", _KEY_TESTS)
@@ -375,7 +374,7 @@ def test_a_segwit_address_of_another_shape_is_refused(
     version: int, program: bytes, reason: str
 ) -> None:
     """A witness program of a size its version does not take."""
-    address = litecoin._segwit_address(version, program)
+    address = segwit_address(version, program, hrp="ltc", limit=90)
     with pytest.raises(CoinAddressesValueError) as caught:
         assert_valid_address(address)
     assert str(caught.value).endswith(f"nor a segwit one ({reason})")

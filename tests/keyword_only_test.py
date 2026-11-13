@@ -39,6 +39,7 @@ if TYPE_CHECKING:
 # public callable that takes at least one keyword-only parameter, and the
 # names of those parameters in declaration order
 KEYWORD_ONLY: dict[str, list[str]] = {
+    "coin_addresses.bitcoin_gold:address_from_pub_key": ["script_type"],
     "coin_addresses.litecoin:address_from_pub_key": ["script_type"],
 }
 

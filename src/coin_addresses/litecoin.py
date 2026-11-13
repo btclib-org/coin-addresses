@@ -11,9 +11,8 @@ reads P2SH written with Bitcoin's 5, a leading 3. A segwit address is
 BIP173's bech32, or BIP350's bech32m from witness version 1, with the
 HRP `ltc`.
 
-`address_from_pub_key`'s `script_type` names the address a key gives:
-"p2pkh", "p2sh-p2wpkh", the P2SH of the version 0 witness program of the
-key hash, or "p2wpkh", that witness program as a segwit address.
+`address_from_pub_key`'s `script_type` names the address a key gives,
+as `coin_addresses._bitcoin.script_type_address` says, and
 `coin_addresses._bitcoin` says which encoding of the key is hashed.
 
 The version bytes and the HRP are `CMainParams`'s, the encodings are
@@ -42,24 +41,16 @@ handed.
 from __future__ import annotations
 
 from base58_bech32.base58 import BITCOIN_ALPHABET
-from base58_bech32.bech32 import (
-    BECH32_1_CONST,
-    BECH32_M_CONST,
-    bech32_decode,
-    bech32_encode,
-    convertbits,
-)
 from base58_bech32.exceptions import Base58Bech32ValueError
 from ecc.curves import PubKey
 
 from coin_addresses._bitcoin import (
     assert_string,
-    base58_address,
+    assert_valid_segwit_address,
     decode_base58_address,
-    pub_key_hash,
+    script_type_address,
 )
-from coin_addresses._hashes import hash160
-from coin_addresses.exceptions import CoinAddressesTypeError, CoinAddressesValueError
+from coin_addresses.exceptions import CoinAddressesValueError
 
 __all__ = [
     "address_from_pub_key",
@@ -78,61 +69,16 @@ _HRP = "ltc"
 # segwit address
 _LIMIT = 90
 
-_SCRIPT_TYPES = ("p2pkh", "p2sh-p2wpkh", "p2wpkh")
-
-
-def _segwit_address(version: int, program: bytes) -> str:
-    """Return the segwit address of a witness version and program."""
-    data = [version, *convertbits(program, 8, 5)]
-    m = BECH32_1_CONST if version == 0 else BECH32_M_CONST
-    return bech32_encode(_HRP, data, m=m, limit=_LIMIT).decode("ascii")
-
 
 def address_from_pub_key(pub_key: PubKey, *, script_type: str = "p2pkh") -> str:
     """Return the address of a secp256k1 public key, for one script type.
 
-    `script_type` is "p2pkh", "p2sh-p2wpkh" or "p2wpkh", as the module's
-    docstring says; another string is a `CoinAddressesValueError`, and a
-    non-string a `CoinAddressesTypeError`. The key is read, and refused,
-    as `coin_addresses._bitcoin.pub_key_hash` says.
+    `script_type` names the script type, and it and the key are read,
+    and refused, as `coin_addresses._bitcoin.script_type_address` says.
     """
-    if not isinstance(script_type, str):
-        raise CoinAddressesTypeError(
-            f"script type not a string: {type(script_type).__name__}"
-        )
-    if script_type not in _SCRIPT_TYPES:
-        err_msg = f"unknown script type, not one of {', '.join(_SCRIPT_TYPES)}"
-        raise CoinAddressesValueError(err_msg)
-    digest = pub_key_hash(pub_key)
-    if script_type == "p2pkh":
-        return base58_address(_P2PKH, digest, alphabet=BITCOIN_ALPHABET)
-    if script_type == "p2wpkh":
-        return _segwit_address(0, digest)
-    # the redeem script is the witness program: OP_0, then a push of the
-    # 20-byte key hash
-    return base58_address(
-        _P2SH, hash160(b"\x00\x14" + digest), alphabet=BITCOIN_ALPHABET
+    return script_type_address(
+        pub_key, script_type, p2pkh=_P2PKH, p2sh=_P2SH, hrp=_HRP, limit=_LIMIT
     )
-
-
-def _assert_valid_segwit_address(address: str) -> None:
-    """Refuse a string that is not a Litecoin segwit address."""
-    hrp, data, m = bech32_decode(address, limit=_LIMIT)
-    if hrp != _HRP:
-        raise CoinAddressesValueError("not the Litecoin HRP")
-    if not data:
-        raise CoinAddressesValueError("no witness version")
-    version = data[0]
-    if version > 16:
-        raise CoinAddressesValueError(f"invalid witness version: {version}")
-    if m != (BECH32_1_CONST if version == 0 else BECH32_M_CONST):
-        raise CoinAddressesValueError(f"wrong checksum for witness version {version}")
-    program = convertbits(data[1:], 5, 8, pad=False)
-    if version == 0 and len(program) not in (20, 32):
-        err_msg = f"{len(program)}-byte witness program for witness version 0"
-        raise CoinAddressesValueError(err_msg)
-    if not 2 <= len(program) <= 40:
-        raise CoinAddressesValueError(f"{len(program)}-byte witness program")
 
 
 def assert_valid_address(address: str) -> None:
@@ -150,7 +96,7 @@ def assert_valid_address(address: str) -> None:
     else:
         return
     try:
-        _assert_valid_segwit_address(address)
+        assert_valid_segwit_address(address, hrp=_HRP, limit=_LIMIT, coin="Litecoin")
     except (CoinAddressesValueError, Base58Bech32ValueError) as e:
         segwit = str(e)
     else:
