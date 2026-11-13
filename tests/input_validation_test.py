@@ -18,9 +18,14 @@ btclib-org/btclib#814 settled, so this file drives the two separately:
 
 The input types are few: `ecc`'s `PubKey`, and `str`. `_WRONG_TYPE` and
 `_WRONG_VALUE` give each of them values of the two kinds, and the walk
-finds every public module-level function whose *required* parameters
-are all of those types. Those it can call with no fixture and no
-knowledge of what the function does.
+finds every function a module's `__all__` lists whose *required*
+parameters are all of those types. Those it can call with no fixture and
+no knowledge of what the function does.
+
+The list decides, not the underscore, as CONTRIBUTING.md's "The public
+surface" defines a public name. A function the list leaves out is not
+driven, whatever its name, and a helper of a private module is such a
+function.
 
 Every argument is wrong at once, which is not weaker than one wrong
 argument among valid ones: whichever the function refuses first, the rule
@@ -36,6 +41,10 @@ to do without.
 A function taking a type the vocabulary does not build is driven by the
 tests of its own module. So is one with a keyword-only parameter that
 has no default: the walk passes its arguments by position.
+
+An **async function** the list names fails the walk, which calls and
+does not await. The library has none.
+
 `test_the_walk_reaches_what_it_claims` pins what the walk does find, so
 a narrowing of it fails here rather than quietly running over less.
 """
@@ -55,6 +64,9 @@ from coin_addresses.exceptions import (
     CoinAddressesTypeError,
     CoinAddressesValueError,
 )
+
+from . import exported_names
+from .all_test import module_scope
 
 _LIBRARY = Path(__file__).parents[1] / "src" / "coin_addresses"
 
@@ -87,6 +99,23 @@ def _alias_of(annotation: ast.expr) -> str | None:
     return name if name in _WRONG_TYPE else None
 
 
+def _public_functions(module: str, source: str) -> Iterator[ast.FunctionDef]:
+    """Yield the module-level functions the module's `__all__` lists.
+
+    Module level is every statement the module runs in its own namespace,
+    a definition under an `if` or a `try` included. A listed async
+    function raises, the walk having no way to drive it.
+    """
+    tree = ast.parse(source)
+    exported = exported_names(tree, module)
+    for node in module_scope(tree.body):
+        if isinstance(node, ast.AsyncFunctionDef) and node.name in exported:
+            msg = f"{module}:{node.lineno}: the walk cannot drive async {node.name}"
+            raise ValueError(msg)
+        if isinstance(node, ast.FunctionDef) and node.name in exported:
+            yield node
+
+
 def _drivable_in(module: str, source: str) -> dict[str, list[str]]:
     """Return every public function of one module the vocabulary can call.
 
@@ -96,9 +125,7 @@ def _drivable_in(module: str, source: str) -> dict[str, list[str]]:
     has nothing to pass.
     """
     found: dict[str, list[str]] = {}
-    for node in ast.parse(source).body:
-        if not isinstance(node, ast.FunctionDef) or node.name.startswith("_"):
-            continue
+    for node in _public_functions(module, source):
         # a required keyword-only parameter, which `kw_defaults` holds
         # as None
         if None in node.args.kw_defaults:
@@ -184,19 +211,15 @@ def test_a_wrong_value_leaves_as_a_value_error_of_the_package(dotted: str) -> No
 def test_the_vocabulary_is_the_packages_input_types() -> None:
     """A renamed type would narrow the walk without failing anything.
 
-    Every type a parameter of a public function of a public module is
-    annotated with is in the vocabulary, so a function taking a new type
-    fails here until the vocabulary builds it.
+    Every type a parameter of a public function is annotated with is in
+    the vocabulary, so a function taking a new type fails here until the
+    vocabulary builds it.
     """
     annotated: set[str] = set()
     for path in sorted(_LIBRARY.rglob("*.py")):
-        if path.stem.startswith("_") and path.stem != "__init__":
-            continue
-        tree = ast.parse(path.read_text(encoding="utf-8"))
         annotated |= {
             ast.unparse(a.annotation).replace(" | None", "").strip()
-            for node in tree.body
-            if isinstance(node, ast.FunctionDef) and not node.name.startswith("_")
+            for node in _public_functions(path.name, path.read_text(encoding="utf-8"))
             for a in [*node.args.posonlyargs, *node.args.args, *node.args.kwonlyargs]
             if a.annotation is not None
         }
@@ -223,8 +246,130 @@ def test_the_walk_reaches_what_it_claims() -> None:
     # ignore, a required keyword-only parameter, and a required parameter
     # the vocabulary does not build
     source = (
+        "__all__ = ['keyword', 'required', 'other']\n"
         "def keyword(a: str, *, k: str = '') -> None: ...\n"
         "def required(a: str, *, k: str) -> None: ...\n"
         "def other(a: str, b: bytes) -> None: ...\n"
     )
     assert _drivable_in("m", source) == {"m.keyword": ["str"]}
+
+
+def test_the_list_decides_what_the_walk_drives() -> None:
+    """A function is driven because its module's `__all__` lists it.
+
+    `coin_addresses._bitcoin.pub_key_hash` is the control: a public name,
+    a parameter the vocabulary builds, and a private module whose list
+    leaves it out. The planted modules write the list in each form the
+    library uses, and the last has none.
+    """
+    assert "coin_addresses._bitcoin.pub_key_hash" not in _DRIVABLE
+
+    functions = "def listed(a: str) -> None: ...\ndef unlisted(a: str) -> None: ...\n"
+    assert _drivable_in("m", "__all__ = ['listed']\n" + functions) == {
+        "m.listed": ["str"]
+    }
+    assert _drivable_in("m", "__all__: list[str] = ['listed']\n" + functions) == {
+        "m.listed": ["str"]
+    }
+    assert not _drivable_in("m", functions)
+
+
+# a function listed and defined under each block that runs at module level
+_BLOCKS = ("if", "else", "try", "handler", "finally", "with", "for", "while", "case")
+_UNDER_BLOCKS = (
+    f"__all__ = {[f'in_{block}' for block in _BLOCKS]}\n"
+    "if X:\n"
+    "    def in_if(a: str) -> None: ...\n"
+    "else:\n"
+    "    def in_else(a: str) -> None: ...\n"
+    "try:\n"
+    "    def in_try(a: str) -> None: ...\n"
+    "except E:\n"
+    "    def in_handler(a: str) -> None: ...\n"
+    "finally:\n"
+    "    def in_finally(a: str) -> None: ...\n"
+    "with C:\n"
+    "    def in_with(a: str) -> None: ...\n"
+    "for _ in X:\n"
+    "    def in_for(a: str) -> None: ...\n"
+    "while X:\n"
+    "    def in_while(a: str) -> None: ...\n"
+    "match X:\n"
+    "    case _:\n"
+    "        def in_case(a: str) -> None: ...\n"
+)
+
+
+def test_the_walk_reaches_a_function_under_a_block() -> None:
+    """A definition under a block is a module-level function all the same."""
+    assert _drivable_in("m", _UNDER_BLOCKS) == {
+        f"m.in_{block}": ["str"] for block in _BLOCKS
+    }
+
+
+def test_the_reader_takes_the_forms_the_library_writes() -> None:
+    """A plain list or tuple, an annotated one, and reads of the list."""
+    assert exported_names(ast.parse("__all__ = ['f']\n"), "m") == {"f"}
+    assert exported_names(ast.parse("__all__: list[str] = []\n"), "m") == set()
+    source = (
+        "__all__ = ('f',)\n"
+        "def f(name: str) -> bool:\n"
+        "    return name in __all__ or name in {*__all__}\n"
+    )
+    assert exported_names(ast.parse(source), "m") == {"f"}
+    assert exported_names(ast.parse("f = 1\n"), "m") == set()
+
+
+# each a write to `__all__` the reader refuses, with the lines it names
+_REFUSED = {
+    "chained": ("__all__ = names = ['f']\n", "1"),
+    "assigned twice": ("__all__ = ['f']\n__all__ = ['g']\n", "1, 2"),
+    "augmented": ("__all__ = ['f']\n__all__ += ['g']\n", "1, 2"),
+    "mutated": ("__all__ = ['f']\n__all__.append('g')\n", "1, 2"),
+    "item assigned": ("__all__ = ['f']\n__all__[0] = 'g'\n", "1, 2"),
+    "deleted": ("__all__ = ['f']\ndel __all__\n", "1, 2"),
+    "computed": ("__all__ = sorted(['f'])\n", "1"),
+    "not a string": ("__all__ = ['f', 1]\n", "1"),
+    "under a block": ("if X:\n    __all__ = ['f']\n", "2"),
+    "aliased": ("__all__ = ['f']\nother = __all__\nother.append('g')\n", "1, 2"),
+    "passed on": ("__all__ = ['f']\nsorted(__all__)\n", "1, 2"),
+    "on the left of in": ("__all__ = ['f']\n__all__ in x\n", "1, 2"),
+    "after not in": ("__all__ = ['f']\n'g' not in __all__\n", "1, 2"),
+    "unpacked into a call": ("__all__ = ['f']\nprint(*__all__)\n", "1, 2"),
+    "imported": ("import __all__\n", "1"),
+    "imported as": ("import x as __all__\n", "1"),
+    "imported from": ("from m import y as __all__\n", "1"),
+    "a function": ("def __all__() -> None: ...\n", "1"),
+    "an async function": ("async def __all__() -> None: ...\n", "1"),
+    "a class": ("class __all__: ...\n", "1"),
+    "a parameter": ("def f(__all__: str) -> None: ...\n", "1"),
+    "caught as": ("try:\n    pass\nexcept E as __all__:\n    pass\n", "3"),
+    "captured": ("match x:\n    case __all__:\n        pass\n", "2"),
+    "star-captured": ("match x:\n    case [*__all__]:\n        pass\n", "2"),
+    "captured as": ("match x:\n    case [y] as __all__:\n        pass\n", "2"),
+    "mapping rest": ("match x:\n    case {**__all__}:\n        pass\n", "2"),
+    "global": ("def f() -> None:\n    global __all__\n", "2"),
+    "nonlocal": (
+        (
+            "def f() -> None:\n    __all__ = 1\n    def g() -> None:\n"
+            "        nonlocal __all__\n"
+        ),
+        "2, 4",
+    ),
+}
+
+
+@pytest.mark.parametrize("source, lines", _REFUSED.values(), ids=list(_REFUSED))
+def test_the_reader_refuses_any_other_form(source: str, lines: str) -> None:
+    """A form the reader does not take raises rather than return a guess."""
+    with pytest.raises(ValueError, match=f"^m: .* at line {lines}$"):
+        exported_names(ast.parse(source), "m")
+
+
+def test_the_walk_refuses_a_listed_async_function() -> None:
+    """It cannot drive one, so it says so rather than skip it."""
+    source = "__all__ = ['f']\nasync def f(a: str) -> None: ...\n"
+    with pytest.raises(ValueError, match="^m:2: the walk cannot drive async f$"):
+        _drivable_in("m", source)
+    # unlisted, it is no business of this walk's
+    assert not _drivable_in("m", "__all__ = []\nasync def f(a: str) -> None: ...\n")
