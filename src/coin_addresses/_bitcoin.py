@@ -9,13 +9,14 @@ encoding, and its compressed and uncompressed encodings give different
 addresses. The bitcoin clones' modules give the address of the
 compressed one, which BIP32 wallets derive, and refuse a key written
 uncompressed rather than answer an address its holder may not expect.
-The cosmos module does the same: a Cosmos address carries that hash, in
-bech32.
+The cosmos and xrp modules do the same: a Cosmos address carries that
+hash in bech32, and an XRP Ledger address carries it in Base58Check.
 
 A legacy address is the Base58Check of a version byte and a hash. The
 version byte says the coin and the script type; which ones a coin uses
 is that coin's module's to say. Tron writes its address the same way,
-with a hash of its own.
+with a hash of its own, and the XRP Ledger with Ripple's alphabet in
+place of Bitcoin's.
 
 Whitespace around a legacy address is refused. The reference nodes'
 `DecodeBase58` skips leading and trailing whitespace, so to Bitcoin Cash
@@ -97,23 +98,30 @@ def assert_string(address: object) -> None:
         raise CoinAddressesTypeError(f"not a string: {type(address).__name__}")
 
 
-def base58_address(version: int, digest: bytes) -> str:
-    """Return the Base58Check address of a version byte and a hash."""
-    return b58encode_check(bytes([version]) + digest).decode("ascii")
+def base58_address(version: int, digest: bytes, *, alphabet: bytes) -> str:
+    """Return the Base58Check address of a version byte and a hash.
+
+    `alphabet` is the coin's Base58 alphabet.
+    """
+    payload = bytes([version]) + digest
+    return b58encode_check(payload, alphabet=alphabet).decode("ascii")
 
 
 def decode_base58_address(
-    address: str, sizes: Mapping[int, tuple[int, ...]]
+    address: str,
+    sizes: Mapping[int, tuple[int, ...]],
+    *,
+    alphabet: bytes,
 ) -> tuple[int, bytes]:
     """Return the version byte and the hash of a Base58Check address.
 
     `sizes` maps each version byte the coin uses to the hash sizes it
     takes. A string that is no Base58Check, a version byte not in
     `sizes`, and a hash of a size its version does not take are each a
-    `CoinAddressesValueError`.
+    `CoinAddressesValueError`. `alphabet` is as `base58_address` says.
     """
     try:
-        payload = b58decode_check(address)
+        payload = b58decode_check(address, alphabet=alphabet)
     except Base58Bech32ValueError as e:
         reason = str(e)
     else:

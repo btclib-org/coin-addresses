@@ -9,7 +9,7 @@ from __future__ import annotations
 import random
 
 import pytest
-from base58_bech32.base58 import b58decode_check
+from base58_bech32.base58 import BITCOIN_ALPHABET, b58decode_check
 from base58_bech32.cashaddr import cashaddr_decode, cashaddr_encode
 from base58_bech32.exceptions import Base58Bech32ValueError
 from ecc.curves import PreparedPoint, bytes_from_point, mult, secp256k1
@@ -656,7 +656,7 @@ def test_the_specifications_translations_are_valid(legacy: str, cashaddr: str) -
     version = b58decode_check(legacy)[0]
     _, kind, digest = cashaddr_decode(cashaddr)
     assert (version, kind) in {(0, 0), (5, 1)}
-    assert base58_address(version, digest) == legacy
+    assert base58_address(version, digest, alphabet=BITCOIN_ALPHABET) == legacy
     assert cashaddr_encode("bitcoincash", kind, digest).decode("ascii") == cashaddr
 
 
@@ -728,10 +728,10 @@ def test_a_legacy_address_of_bitcoin_cash_node_is_valid(
     assert_valid_address(address)
     octets = bytes.fromhex(script)
     if octets[:3] == b"\x76\xa9\x14":
-        assert base58_address(0, octets[3:23]) == address
+        assert base58_address(0, octets[3:23], alphabet=BITCOIN_ALPHABET) == address
     else:
         assert octets[0] in {0xA9, 0xAA}
-        assert base58_address(5, octets[2:-1]) == address
+        assert base58_address(5, octets[2:-1], alphabet=BITCOIN_ALPHABET) == address
 
 
 @pytest.mark.parametrize("address", _KEY_IO_INVALID)
@@ -790,9 +790,15 @@ def test_a_cashaddr_of_another_shape_is_refused(address: str, reason: str) -> No
 @pytest.mark.parametrize(
     "address, reason",
     [
-        (base58_address(0, bytes(32)), "32-byte hash for version byte 0"),
+        (
+            base58_address(0, bytes(32), alphabet=BITCOIN_ALPHABET),
+            "32-byte hash for version byte 0",
+        ),
         # Litecoin's P2PKH version byte
-        (base58_address(48, bytes(20)), "unknown version byte: 48"),
+        (
+            base58_address(48, bytes(20), alphabet=BITCOIN_ALPHABET),
+            "unknown version byte: 48",
+        ),
     ],
 )
 def test_a_legacy_address_of_another_shape_is_refused(

@@ -53,6 +53,13 @@ coin_addresses.tron module
    :members:
    :show-inheritance:
 
+coin_addresses.xrp module
+-------------------------
+
+.. automodule:: coin_addresses.xrp
+   :members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

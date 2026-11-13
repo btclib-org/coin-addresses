@@ -20,11 +20,12 @@ No release is out yet. `coin_addresses.evm` derives and validates the
 addresses of Ethereum and of the EVM chains, with their EIP-55 checksum,
 `coin_addresses.bitcoin_cash`, `coin_addresses.litecoin` and
 `coin_addresses.dogecoin` those of three bitcoin clones,
-`coin_addresses.tron` those of Tron, and `coin_addresses.cosmos` those
-of the Cosmos Hub. Each other format arrives in a pull request of its
-own. The first release is to cover the coins on secp256k1: the bitcoin
-clones (Bitcoin Cash, Bitcoin SV, Bitcoin Gold, eCash, Litecoin,
-Dogecoin and Dash), the EVM chains, Tron, Cosmos and XRP. It builds on
+`coin_addresses.tron` those of Tron, `coin_addresses.cosmos` those of
+the Cosmos Hub, and `coin_addresses.xrp` the classic addresses of the
+XRP Ledger. Each other format arrives in a pull request of its own. The
+first release is to cover the coins on secp256k1: the bitcoin clones
+(Bitcoin Cash, Bitcoin SV, Bitcoin Gold, eCash, Litecoin, Dogecoin and
+Dash), the EVM chains, Tron, Cosmos and XRP. It builds on
 [ecc](https://github.com/btclib-org/ecc) for the curve and on
 [base58-bech32](https://github.com/btclib-org/base58-bech32) for the
 encodings, and not on btclib.
@@ -106,6 +107,21 @@ assert address == "cosmos1w508d6qejxtdg4y5r3zarvary0c5xw7k6ah60c"
 assert cosmos.is_valid_address(address)
 # the same bytes with Osmosis's HRP
 assert not cosmos.is_valid_address("osmo1w508d6qejxtdg4y5r3zarvary0c5xw7kjxy2e2")
+```
+
+An XRP Ledger classic address carries the bytes of a Bitcoin P2PKH
+address, written with Ripple's Base58 alphabet. An X-address is refused:
+
+```python
+from coin_addresses import xrp
+
+pub_key = "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"
+address = xrp.address_from_pub_key(pub_key)
+# Bitcoin writes the same bytes as 1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH
+assert address == "rBgGZ9tc4him9KBzD8fKFiQz3fSZpaSwMH"
+assert xrp.is_valid_address(address)
+# an X-address of another account, from xrpl-py's tests
+assert not xrp.is_valid_address("X7AcgcsBL6XDcUb289X4mJ8djcdyKaB5hJDWMArnXr61cqZ")
 ```
 
 `tests/readme_test.py` runs every Python block of this file, so the

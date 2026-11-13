@@ -578,7 +578,7 @@ uv pip install "$1"
 from importlib.metadata import requires, version
 import coin_addresses
 from coin_addresses import bitcoin_cash, cosmos, dogecoin, evm, exceptions
-from coin_addresses import litecoin, tron
+from coin_addresses import litecoin, tron, xrp
 
 print(version('coin-addresses'), requires('coin-addresses'))
 assert coin_addresses.__version__ == version('coin-addresses')

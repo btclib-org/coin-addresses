@@ -41,6 +41,7 @@ handed.
 
 from __future__ import annotations
 
+from base58_bech32.base58 import BITCOIN_ALPHABET
 from base58_bech32.bech32 import (
     BECH32_1_CONST,
     BECH32_M_CONST,
@@ -104,12 +105,14 @@ def address_from_pub_key(pub_key: PubKey, *, script_type: str = "p2pkh") -> str:
         raise CoinAddressesValueError(err_msg)
     digest = pub_key_hash(pub_key)
     if script_type == "p2pkh":
-        return base58_address(_P2PKH, digest)
+        return base58_address(_P2PKH, digest, alphabet=BITCOIN_ALPHABET)
     if script_type == "p2wpkh":
         return _segwit_address(0, digest)
     # the redeem script is the witness program: OP_0, then a push of the
     # 20-byte key hash
-    return base58_address(_P2SH, hash160(b"\x00\x14" + digest))
+    return base58_address(
+        _P2SH, hash160(b"\x00\x14" + digest), alphabet=BITCOIN_ALPHABET
+    )
 
 
 def _assert_valid_segwit_address(address: str) -> None:
@@ -141,7 +144,7 @@ def assert_valid_address(address: str) -> None:
     """
     assert_string(address)
     try:
-        decode_base58_address(address, _SIZES)
+        decode_base58_address(address, _SIZES, alphabet=BITCOIN_ALPHABET)
     except CoinAddressesValueError as e:
         legacy = str(e)
     else:

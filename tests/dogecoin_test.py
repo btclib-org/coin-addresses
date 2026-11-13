@@ -9,7 +9,7 @@ from __future__ import annotations
 import random
 
 import pytest
-from base58_bech32.base58 import b58decode_check
+from base58_bech32.base58 import BITCOIN_ALPHABET, b58decode_check
 from ecc.curves import PreparedPoint, bytes_from_point, mult, secp256k1
 
 from coin_addresses._bitcoin import base58_address
@@ -239,7 +239,12 @@ def test_an_address_of_dogecoin_core_is_valid(
 ) -> None:
     """Each mainnet address is valid, and encodes its hash and version."""
     assert_valid_address(address)
-    assert base58_address(_VERSIONS[kind], bytes.fromhex(digest)) == address
+    assert (
+        base58_address(
+            _VERSIONS[kind], bytes.fromhex(digest), alphabet=BITCOIN_ALPHABET
+        )
+        == address
+    )
 
 
 @pytest.mark.parametrize("address", _KEYS_INVALID)
@@ -272,9 +277,15 @@ def test_the_derivation_holds_over_generated_keys() -> None:
 @pytest.mark.parametrize(
     "address, reason",
     [
-        (base58_address(30, bytes(32)), "32-byte hash for version byte 30"),
+        (
+            base58_address(30, bytes(32), alphabet=BITCOIN_ALPHABET),
+            "32-byte hash for version byte 30",
+        ),
         # Litecoin's P2PKH version byte
-        (base58_address(48, bytes(20)), "unknown version byte: 48"),
+        (
+            base58_address(48, bytes(20), alphabet=BITCOIN_ALPHABET),
+            "unknown version byte: 48",
+        ),
         ("0OIl", "Base58 string contains invalid characters"),
     ],
 )
