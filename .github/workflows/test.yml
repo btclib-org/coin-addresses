@@ -85,7 +85,7 @@ jobs:
   # tree's own prose
   changes:
     name: Decide whether the jobs below have anything to check
-    uses: btclib-org/.github/.github/workflows/reusable-changes.yml@cb5a79443399980ba717df2dea23dbedf6bdbc3a # v2026.11.12
+    uses: btclib-org/.github/.github/workflows/reusable-changes.yml@76965633d09b390a5760b5201e3cf3e82022fe81 # v2026.11.13
     # a job's permissions replace the workflow's rather than adding to
     # them, so contents: read is named beside the scope the callee's job
     # adds: a block leaving it off would bound the call to contents: none

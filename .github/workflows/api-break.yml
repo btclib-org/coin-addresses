@@ -46,6 +46,6 @@ jobs:
     permissions:
       contents: read
       pull-requests: write # the label; read-only on a fork
-    uses: btclib-org/.github/.github/workflows/reusable-api-break.yml@cb5a79443399980ba717df2dea23dbedf6bdbc3a # v2026.11.12
+    uses: btclib-org/.github/.github/workflows/reusable-api-break.yml@76965633d09b390a5760b5201e3cf3e82022fe81 # v2026.11.13
     with:
       package: coin_addresses
