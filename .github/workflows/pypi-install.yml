@@ -143,7 +143,7 @@ jobs:
           from importlib.metadata import requires, version
           import coin_addresses
           from coin_addresses import bitcoin_cash, bitcoin_gold, bitcoin_sv, cosmos, dash, dogecoin
-          from coin_addresses import ecash, evm, exceptions, litecoin, solana, tron, xrp
+          from coin_addresses import ecash, evm, exceptions, litecoin, solana, stellar, tron, xrp
 
           print("installed version:", version("coin-addresses"))
           print("requires:", requires("coin-addresses"))

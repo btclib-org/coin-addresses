@@ -243,6 +243,7 @@ def test_the_walk_reaches_what_it_claims() -> None:
     assert _DRIVABLE["coin_addresses.evm.assert_valid_address"] == ["str"]
     assert _DRIVABLE["coin_addresses.evm.is_valid_address"] == ["str"]
     assert _DRIVABLE["coin_addresses.solana.address_from_pub_key"] == ["Octets"]
+    assert _DRIVABLE["coin_addresses.stellar.address_from_pub_key"] == ["Octets"]
 
     # a private name, whatever its parameters
     assert "coin_addresses.evm._checksum_encode" not in _DRIVABLE

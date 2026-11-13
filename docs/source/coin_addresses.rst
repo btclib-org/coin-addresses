@@ -81,6 +81,13 @@ coin_addresses.solana module
    :members:
    :show-inheritance:
 
+coin_addresses.stellar module
+-----------------------------
+
+.. automodule:: coin_addresses.stellar
+   :members:
+   :show-inheritance:
+
 coin_addresses.tron module
 --------------------------
 

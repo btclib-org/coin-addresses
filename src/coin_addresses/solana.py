@@ -49,7 +49,8 @@ from base58_bech32.exceptions import Base58Bech32ValueError
 from ecc.alias import Octets
 
 from coin_addresses._bitcoin import assert_string
-from coin_addresses.exceptions import CoinAddressesTypeError, CoinAddressesValueError
+from coin_addresses._ed25519 import pub_key_bytes
+from coin_addresses.exceptions import CoinAddressesValueError
 
 __all__ = [
     "address_from_pub_key",
@@ -64,39 +65,6 @@ _SIZE = 32
 _MAX_LENGTH = 44
 
 
-def _key_bytes(pub_key: Octets) -> bytes:
-    """Return the 32 bytes of a public key given as octets or as hex.
-
-    A value of no octets type is a `CoinAddressesTypeError`. A string
-    that is no hex, a `memoryview` that is released or is not plain
-    contiguous bytes, and octets of another size are each a
-    `CoinAddressesValueError`.
-    """
-    # each refusal of a value is the size check's, raised outside the
-    # `except` that may come first, so that no error is chained
-    if isinstance(pub_key, str):
-        try:
-            octets = bytes.fromhex(pub_key)
-        except ValueError:
-            octets = b""
-    elif isinstance(pub_key, memoryview):
-        try:
-            plain = pub_key.c_contiguous and pub_key.format == "B"
-            octets = bytes(pub_key) if plain else b""
-        except ValueError:
-            # a released view answers every read with a ValueError
-            octets = b""
-    elif isinstance(pub_key, (bytes, bytearray)):
-        octets = bytes(pub_key)
-    else:
-        # what mypy rules out and a caller can still pass
-        err_msg = f"not a public key: {type(pub_key).__name__}"  # type: ignore[unreachable]
-        raise CoinAddressesTypeError(err_msg)
-    if len(octets) != _SIZE:
-        raise CoinAddressesValueError("not a public key")
-    return octets
-
-
 def address_from_pub_key(pub_key: Octets) -> str:
     """Return the Solana address of an ed25519 public key.
 
@@ -105,7 +73,7 @@ def address_from_pub_key(pub_key: Octets) -> str:
     such type is a `CoinAddressesTypeError`, and one that is not 32
     bytes a `CoinAddressesValueError`.
     """
-    return b58encode(_key_bytes(pub_key)).decode("ascii")
+    return b58encode(pub_key_bytes(pub_key)).decode("ascii")
 
 
 def assert_valid_address(address: str) -> None:

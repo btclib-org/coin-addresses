@@ -1,15 +1,16 @@
 # Solana addresses, mutated: the size of a key and of an address, the
-# longest string decoded, the reading of a key's octets and
-# is_valid_address's answer. A size moved refuses every address, and may
-# validate a string of another length as one.
+# longest string decoded, the reading of a key's octets, which Stellar's
+# addresses share, and is_valid_address's answer. A size moved refuses
+# every address, and may validate a string of another length as one.
 
 [cosmic-ray]
 module-path = [
+    "src/coin_addresses/_ed25519.py",
     "src/coin_addresses/solana.py",
 ]
 
 test-command = """python -m pytest -x -q -p no:randomly \
-  tests/solana_test.py"""
+  tests/solana_test.py tests/stellar_test.py"""
 
 timeout = 300
 

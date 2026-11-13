@@ -1139,7 +1139,7 @@ rtd=coin-addresses
 python=$(grep -Ev '^[[:space:]]*(#|$)' .python-version)
 smoke='from coin_addresses import bitcoin_cash, bitcoin_gold, bitcoin_sv, cosmos
 from coin_addresses import dash, dogecoin, ecash, evm, exceptions, litecoin
-from coin_addresses import solana, tron, xrp
+from coin_addresses import solana, stellar, tron, xrp
 import coin_addresses; print(coin_addresses.__version__)'
 ```
 
