@@ -325,6 +325,19 @@ def test_a_value_that_is_no_key_is_refused(pub_key: object) -> None:
     assert caught.value.__context__ is None
 
 
+@pytest.mark.parametrize(
+    "view",
+    [memoryview(bytes.fromhex(_GENESIS_KEY)), memoryview(bytes(66))[::2]],
+    ids=["plain", "strided"],
+)
+def test_a_released_view_is_refused_by_the_package(view: memoryview) -> None:
+    """A released view, which answers every read with a bare ValueError."""
+    view.release()
+    with pytest.raises(CoinAddressesValueError, match="^not a public key$") as caught:
+        address_from_pub_key(view)
+    assert caught.value.__context__ is None
+
+
 @pytest.mark.parametrize("pub_key", [None, 1, [1, 2]])
 def test_a_value_of_no_key_type_is_refused(pub_key: object) -> None:
     """A value of no type a key has is a type error, ecc's not chained."""

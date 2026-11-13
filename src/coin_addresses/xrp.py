@@ -74,18 +74,27 @@ _ED25519_SIZE = 33
 def _assert_not_ed25519(pub_key: PubKey) -> None:
     """Refuse an Ed25519 key as the XRP Ledger writes it, 0xED and 32 bytes.
 
-    Anything else is left to `pub_key_hash`, which refuses what is no
-    secp256k1 key.
+    A released `memoryview`, which has no bytes to read, is refused as no
+    key. Anything else is left to `pub_key_hash`, which refuses what is
+    no secp256k1 key.
     """
+    octets: bytes | None
     if isinstance(pub_key, str):
         try:
             octets = bytes.fromhex(pub_key)
         except ValueError:
             return
     elif isinstance(pub_key, (bytes, bytearray, memoryview)):
-        octets = bytes(pub_key)
+        try:
+            octets = bytes(pub_key)
+        except ValueError:
+            # a released view answers every read with a ValueError
+            octets = None
     else:
         return
+    # raised outside the `except`, so that no error is chained
+    if octets is None:
+        raise CoinAddressesValueError("not a public key")
     if len(octets) == _ED25519_SIZE and octets[0] == _ED25519:
         raise CoinAddressesValueError("Ed25519 public key, not supported")
 
