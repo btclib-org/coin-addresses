@@ -17,15 +17,14 @@ and no signature.
 ## What is here
 
 No release is out yet. `coin_addresses.evm` derives and validates the
-addresses of Ethereum and of the EVM chains, with their EIP-55 checksum,
-`coin_addresses.bitcoin_cash`, `coin_addresses.litecoin` and
-`coin_addresses.dogecoin` those of three bitcoin clones,
-`coin_addresses.tron` those of Tron, `coin_addresses.cosmos` those of
-the Cosmos Hub, and `coin_addresses.xrp` the classic addresses of the
-XRP Ledger. Each other format arrives in a pull request of its own. The
-first release is to cover the coins on secp256k1: the bitcoin clones
-(Bitcoin Cash, Bitcoin SV, Bitcoin Gold, eCash, Litecoin, Dogecoin and
-Dash), the EVM chains, Tron, Cosmos and XRP. It builds on
+addresses of Ethereum and of the EVM chains, with their EIP-55 checksum;
+`coin_addresses.bitcoin_cash`, `coin_addresses.bitcoin_sv`,
+`coin_addresses.bitcoin_gold`, `coin_addresses.ecash`,
+`coin_addresses.litecoin`, `coin_addresses.dogecoin` and
+`coin_addresses.dash` those of the bitcoin clones; `coin_addresses.tron`
+those of Tron, `coin_addresses.cosmos` those of the Cosmos Hub, and
+`coin_addresses.xrp` the classic addresses of the XRP Ledger. These are
+the coins on secp256k1 the first release is to cover. It builds on
 [ecc](https://github.com/btclib-org/ecc) for the curve and on
 [base58-bech32](https://github.com/btclib-org/base58-bech32) for the
 encodings, and not on btclib.
@@ -66,9 +65,9 @@ assert not evm.is_valid_address(address.replace("E", "e", 1))
 ```
 
 A bitcoin clone's address is that of the key's compressed SEC encoding,
-and a key written uncompressed is refused. Litecoin's module names the
-script type, and Bitcoin Cash's gives the legacy address beside the
-CashAddr one:
+and a key written uncompressed is refused. The Litecoin and Bitcoin Gold
+modules name the script type, and the Bitcoin Cash and eCash modules
+give the legacy address beside the CashAddr one:
 
 ```python
 from coin_addresses import bitcoin_cash, dogecoin, litecoin
@@ -81,6 +80,24 @@ assert address == "bitcoincash:qp63uahgrxged4z5jswyt5dn5v3lzsem6cy4spdc2h"
 address = bitcoin_cash.legacy_address_from_pub_key(pub_key)
 assert address == "1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH"
 assert dogecoin.is_valid_address(dogecoin.address_from_pub_key(pub_key))
+```
+
+eCash writes CashAddr with its own prefix, and Bitcoin SV reads
+Bitcoin's legacy addresses alone:
+
+```python
+from coin_addresses import bitcoin_cash, bitcoin_gold, bitcoin_sv, dash, ecash
+
+pub_key = "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"
+address = ecash.address_from_pub_key(pub_key)
+assert address == "ecash:qp63uahgrxged4z5jswyt5dn5v3lzsem6cacy2kzvq"
+assert not ecash.is_valid_address(bitcoin_cash.address_from_pub_key(pub_key))
+address = bitcoin_sv.address_from_pub_key(pub_key)
+assert address == "1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH"
+assert not bitcoin_sv.is_valid_address(bitcoin_cash.address_from_pub_key(pub_key))
+address = bitcoin_gold.address_from_pub_key(pub_key, script_type="p2wpkh")
+assert address == "btg1qw508d6qejxtdg4y5r3zarvary0c5xw7k6w057a"
+assert dash.address_from_pub_key(pub_key) == "XmN7PQYWKn5MJFna5fRYgP6mxT2F7xpekE"
 ```
 
 A Tron address carries the bytes of the key's Ethereum address, in

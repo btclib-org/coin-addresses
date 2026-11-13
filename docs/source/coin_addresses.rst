@@ -11,6 +11,20 @@ coin_addresses.bitcoin_cash module
    :members:
    :show-inheritance:
 
+coin_addresses.bitcoin_gold module
+----------------------------------
+
+.. automodule:: coin_addresses.bitcoin_gold
+   :members:
+   :show-inheritance:
+
+coin_addresses.bitcoin_sv module
+--------------------------------
+
+.. automodule:: coin_addresses.bitcoin_sv
+   :members:
+   :show-inheritance:
+
 coin_addresses.cosmos module
 ----------------------------
 
@@ -18,10 +32,24 @@ coin_addresses.cosmos module
    :members:
    :show-inheritance:
 
+coin_addresses.dash module
+--------------------------
+
+.. automodule:: coin_addresses.dash
+   :members:
+   :show-inheritance:
+
 coin_addresses.dogecoin module
 ------------------------------
 
 .. automodule:: coin_addresses.dogecoin
+   :members:
+   :show-inheritance:
+
+coin_addresses.ecash module
+---------------------------
+
+.. automodule:: coin_addresses.ecash
    :members:
    :show-inheritance:
 

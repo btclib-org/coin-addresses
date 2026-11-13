@@ -56,8 +56,12 @@ except PackageNotFoundError:
 
 __all__ = [
     "bitcoin_cash",
+    "bitcoin_gold",
+    "bitcoin_sv",
     "cosmos",
+    "dash",
     "dogecoin",
+    "ecash",
     "evm",
     "exceptions",
     "litecoin",
