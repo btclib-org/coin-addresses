@@ -36,6 +36,7 @@ from coin_addresses import (
     ecash,
     evm,
     litecoin,
+    solana,
     tron,
     xrp,
 )
@@ -56,6 +57,7 @@ ENTRY_POINTS = (
     "coin_addresses.ecash:is_valid_address",
     "coin_addresses.evm:is_valid_address",
     "coin_addresses.litecoin:is_valid_address",
+    "coin_addresses.solana:is_valid_address",
     "coin_addresses.tron:is_valid_address",
     "coin_addresses.xrp:is_valid_address",
 )
@@ -92,6 +94,7 @@ def fuzz_target(data: bytes) -> None:
     _agree(ecash.is_valid_address(text), ecash.assert_valid_address, text)
     _agree(evm.is_valid_address(text), evm.assert_valid_address, text)
     _agree(litecoin.is_valid_address(text), litecoin.assert_valid_address, text)
+    _agree(solana.is_valid_address(text), solana.assert_valid_address, text)
     _agree(tron.is_valid_address(text), tron.assert_valid_address, text)
     _agree(xrp.is_valid_address(text), xrp.assert_valid_address, text)
 
