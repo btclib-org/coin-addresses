@@ -16,15 +16,15 @@ and no signature.
 
 ## What is here
 
-No release is out yet. `coin_addresses.evm` derives and validates the
-addresses of Ethereum and of the EVM chains, with their EIP-55 checksum;
+`coin_addresses.evm` derives and validates the addresses of Ethereum and
+of the EVM chains, with their EIP-55 checksum;
 `coin_addresses.bitcoin_cash`, `coin_addresses.bitcoin_sv`,
 `coin_addresses.bitcoin_gold`, `coin_addresses.ecash`,
 `coin_addresses.litecoin`, `coin_addresses.dogecoin` and
 `coin_addresses.dash` those of the bitcoin clones; `coin_addresses.tron`
 those of Tron, `coin_addresses.cosmos` those of the Cosmos Hub, and
 `coin_addresses.xrp` the classic addresses of the XRP Ledger. These are
-the coins on secp256k1 the first release is to cover.
+the coins on secp256k1 of the first stage.
 `coin_addresses.solana` gives the addresses of Solana, a coin on ed25519
 of the second stage. It builds on
 [ecc](https://github.com/btclib-org/ecc) for the curve and on
