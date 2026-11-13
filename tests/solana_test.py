@@ -216,7 +216,7 @@ def test_the_longest_address_is_valid_and_one_more_character_is_not() -> None:
     assert address_from_pub_key(b"\xff" * 32) == _LONGEST
     assert is_valid_address(_LONGEST)
     with pytest.raises(CoinAddressesValueError) as caught:
-        assert_valid_address(_LONGEST + "1")
+        assert_valid_address(f"{_LONGEST}1")
     assert str(caught.value) == "too many base58 characters: 45, max is 44"
 
 
@@ -238,7 +238,7 @@ def test_the_derivation_holds_over_generated_keys() -> None:
 
 
 @pytest.mark.parametrize(
-    "address", [" " + _SYSTEM_PROGRAM, _SYSTEM_PROGRAM + "\n", "", "0x" + "1" * 32]
+    "address", [f" {_SYSTEM_PROGRAM}", f"{_SYSTEM_PROGRAM}\n", "", f"0x{'1' * 32}"]
 )
 def test_an_address_of_another_shape_is_refused(address: str) -> None:
     """Whitespace, the empty string and a prefix are refused."""
