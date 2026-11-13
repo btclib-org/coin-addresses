@@ -11,9 +11,8 @@ reads P2SH written with Bitcoin's 5, a leading 3. A segwit address is
 BIP173's bech32, or BIP350's bech32m from witness version 1, with the
 HRP `ltc`.
 
-`address_from_pub_key`'s `script_type` names the address a key gives:
-"p2pkh", "p2sh-p2wpkh", the P2SH of the version 0 witness program of the
-key hash, or "p2wpkh", that witness program as a segwit address.
+`address_from_pub_key`'s `script_type` names the address a key gives,
+as `coin_addresses._bitcoin.script_type_address` says, and
 `coin_addresses._bitcoin` says which encoding of the key is hashed.
 
 The version bytes and the HRP are `CMainParams`'s, the encodings are
@@ -74,9 +73,8 @@ _LIMIT = 90
 def address_from_pub_key(pub_key: PubKey, *, script_type: str = "p2pkh") -> str:
     """Return the address of a secp256k1 public key, for one script type.
 
-    `script_type` is "p2pkh", "p2sh-p2wpkh" or "p2wpkh", as the module's
-    docstring says, and it and the key are read, and refused, as
-    `coin_addresses._bitcoin.script_type_address` says.
+    `script_type` names the script type, and it and the key are read,
+    and refused, as `coin_addresses._bitcoin.script_type_address` says.
     """
     return script_type_address(
         pub_key, script_type, p2pkh=_P2PKH, p2sh=_P2SH, hrp=_HRP, limit=_LIMIT
