@@ -74,6 +74,13 @@ coin_addresses.litecoin module
    :members:
    :show-inheritance:
 
+coin_addresses.solana module
+----------------------------
+
+.. automodule:: coin_addresses.solana
+   :members:
+   :show-inheritance:
+
 coin_addresses.tron module
 --------------------------
 

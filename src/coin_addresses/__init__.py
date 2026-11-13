@@ -65,6 +65,7 @@ __all__ = [
     "evm",
     "exceptions",
     "litecoin",
+    "solana",
     "tron",
     "xrp",
 ]

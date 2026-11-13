@@ -24,7 +24,9 @@ addresses of Ethereum and of the EVM chains, with their EIP-55 checksum;
 `coin_addresses.dash` those of the bitcoin clones; `coin_addresses.tron`
 those of Tron, `coin_addresses.cosmos` those of the Cosmos Hub, and
 `coin_addresses.xrp` the classic addresses of the XRP Ledger. These are
-the coins on secp256k1 the first release is to cover. It builds on
+the coins on secp256k1 the first release is to cover.
+`coin_addresses.solana` gives the addresses of Solana, a coin on ed25519
+of the second stage. It builds on
 [ecc](https://github.com/btclib-org/ecc) for the curve and on
 [base58-bech32](https://github.com/btclib-org/base58-bech32) for the
 encodings, and not on btclib.
@@ -147,6 +149,24 @@ assert address == "rBgGZ9tc4him9KBzD8fKFiQz3fSZpaSwMH"
 assert xrp.is_valid_address(address)
 # an X-address of another account, from xrpl-py's tests
 assert not xrp.is_valid_address("X7AcgcsBL6XDcUb289X4mJ8djcdyKaB5hJDWMArnXr61cqZ")
+```
+
+A Solana address is the 32 bytes of an ed25519 public key in Base58,
+with no checksum. Any 32 bytes are an address, so a program derived
+address, which lies off the curve, is valid too:
+
+```python
+from coin_addresses import solana
+
+# a key of bip_utils's tests
+pub_key = "e9b6062841bb977ad21de71ec961900633c26f21384e015b014a637a61499547"
+address = solana.address_from_pub_key(pub_key)
+assert address == "GjJyeC1r2RgkuoCWMyPYkCWSGSGLcz266EaAkLA27AhL"
+assert solana.is_valid_address(address)
+# the System Program's address, the 32 zero bytes
+assert solana.address_from_pub_key(bytes(32)) == "1" * 32
+# a program derived address of solana-sdk's tests
+assert solana.is_valid_address("BwqrghZA2htAcqq8dzP1WDAhTXYTYWj7CHxF5j7TDBAe")
 ```
 
 `tests/readme_test.py` runs every Python block of this file, so the

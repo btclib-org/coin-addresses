@@ -16,11 +16,11 @@ btclib-org/btclib#814 settled, so this file drives the two separately:
 
 ## How it calls what it calls
 
-The input types are few: `ecc`'s `PubKey`, and `str`. `_WRONG_TYPE` and
-`_WRONG_VALUE` give each of them values of the two kinds, and the walk
-finds every function a module's `__all__` lists whose *required*
-parameters are all of those types. Those it can call with no fixture and
-no knowledge of what the function does.
+The input types are few: `ecc`'s `PubKey` and `Octets`, and `str`.
+`_WRONG_TYPE` and `_WRONG_VALUE` give each of them values of the two
+kinds, and the walk finds every function a module's `__all__` lists
+whose *required* parameters are all of those types. Those it can call
+with no fixture and no knowledge of what the function does.
 
 The list decides, not the underscore, as CONTRIBUTING.md's "The public
 surface" defines a public name. A function the list leaves out is not
@@ -78,6 +78,7 @@ _LIBRARY = Path(__file__).parents[1] / "src" / "coin_addresses"
 # about the tree
 _WRONG_TYPE: dict[str, tuple[Any, ...]] = {
     "PubKey": (None, 1.5, [1, 2]),
+    "Octets": (None, 1.5, [1, 2]),
     "str": (None, 1.5, b"0x" + bytes(40)),
 }
 
@@ -88,6 +89,9 @@ _WRONG_TYPE: dict[str, tuple[Any, ...]] = {
 _WRONG_VALUE: dict[str, tuple[Any, ...]] = {
     # a hex string that is not hex, octets of no point, a point off the curve
     "PubKey": ("not hex at all", bytes(33), (1, 2)),
+    # a hex string that is not hex, octets of another size, and a strided
+    # view of the right size
+    "Octets": ("not hex at all", bytes(31), memoryview(bytes(64))[::2]),
     # no prefix, and a prefix with no digits
     "str": ("", "0x"),
 }
@@ -238,6 +242,7 @@ def test_the_walk_reaches_what_it_claims() -> None:
     assert _DRIVABLE["coin_addresses.evm.address_from_pub_key"] == ["PubKey"]
     assert _DRIVABLE["coin_addresses.evm.assert_valid_address"] == ["str"]
     assert _DRIVABLE["coin_addresses.evm.is_valid_address"] == ["str"]
+    assert _DRIVABLE["coin_addresses.solana.address_from_pub_key"] == ["Octets"]
 
     # a private name, whatever its parameters
     assert "coin_addresses.evm._checksum_encode" not in _DRIVABLE
