@@ -612,7 +612,7 @@ wheels = [
 
 [[package]]
 name = "coin-addresses"
-version = "2026.11"
+version = "2026.11.14"
 source = { editable = "." }
 dependencies = [
     { name = "base58-bech32" },
