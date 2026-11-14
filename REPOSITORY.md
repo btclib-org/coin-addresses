@@ -490,63 +490,74 @@ here rather than from `pyproject.toml`'s own copy of it:
 gh api repos/btclib-org/coin-addresses --jq '.homepage'
 ```
 
-## Read the Docs, which is to be coin-addresses.readthedocs.io
+## Read the Docs, which is coin-addresses.readthedocs.io
 
-The project is to be imported on
-[readthedocs.org](https://app.readthedocs.org/) from
-`btclib-org/coin-addresses` under the slug `coin-addresses`, which is what
-`release.yml`'s `documented` job names. The slug is what serves the site,
-and it is not the project's name: renaming the slug makes the old one stop
-answering rather than redirect. `pyproject.toml` declares no
-`documentation` url until the site answers, section 3 giving that field
-only to a tree Read the Docs serves. Whether the site answers:
+The project is imported on [readthedocs.org](https://app.readthedocs.org/)
+from `btclib-org/coin-addresses` under the slug `coin-addresses`, which is
+what `release.yml`'s `documented` job and `pyproject.toml`'s
+`documentation` url name, section 3 giving that field to a tree Read the
+Docs serves. The slug is what serves the site, and it is not the
+project's name: renaming the slug makes the old one stop answering rather
+than redirect. The site answers:
 
 ```shell
 curl -sL -o /dev/null -w '%{http_code} %{url_effective}\n' \
   https://coin-addresses.readthedocs.io/
+# 200 https://coin-addresses.readthedocs.io/en/latest/
 ```
 
-Whether the project's public API answers, which it does without a token:
+The project's public API answers without a token:
 
 ```shell
 p=https://app.readthedocs.org/api/v3/projects/coin-addresses
 curl -s -o /dev/null -w '%{http_code}\n' "$p/"
+# 200
 curl -s "$p/" | jq -c '{default_branch, repository: .repository.url}'
+# {"default_branch":"main",
+#  "repository":"https://github.com/btclib-org/coin-addresses.git"}
 curl -s "$p/" | jq -c '[.programming_language.code, .homepage]'
+# ["words","https://github.com/btclib-org/coin-addresses"]
 diff <(curl -s "$p/" | jq -r '.tags[]' | sort) \
      <(gh api repos/btclib-org/coin-addresses --jq '.topics[]' | sort)
+# (nothing, exit 0)
 ```
+
+Read at 2026-11-14T10:34Z.
 
 The status is what tells an absent project from one with nothing in it:
 the `default_branch` call reads the `404` body,
 `{"detail":"No Project matches the given query."}`, through its filter as
-a pair of `null`s. The project's tags are to be the repository's topics,
-which *Topics* sets, and its homepage the repository rather than the site
-it serves.
+a pair of `null`s. The project's tags are the repository's topics, which
+*Topics* sets, and its homepage is the repository rather than the site it
+serves.
 
-`stable` follows the highest semantic-version tag, and an automation rule,
-"Activate each v* release tag", is to activate each new `v*` tag: it
-matches tags against the custom pattern `^v` and activates the version.
-It is added in the Read the Docs interface, and no call reads it back:
-the API does not expose it, `automation-rules/` answering `404` where an
-endpoint needing a token, such as `redirects/`, answers `401`. What shows
-it at work is a release's `documented / Check read the docs built the
-tag` job.
+`stable` follows the highest semantic-version tag. This prints `latest`,
+`stable` and each tag the automation rule below activated:
 
 ```shell
 curl -s "$p/versions/?active=true" \
   | jq -c '.results[] | [.slug, .type, .ref]'
 ```
 
+An automation rule, "Activate each v* release tag", activates each new
+`v*` tag: it matches tags against the custom pattern `^v` and activates
+the version. It is set in the Read the Docs interface, and no call reads
+it back: the API does not expose it, `automation-rules/` answering `404`
+where an endpoint needing a token, such as `redirects/`, answers `401`.
+What shows it at work is a release's `documented / Check read the docs
+built the tag` job.
+
 **What connects the repository to Read the Docs is the organization-wide
 `read-the-docs-community` GitHub App, not a per-repository webhook**, so
-the repository is expected to carry no hook:
+the repository carries no hook:
 
 ```shell
 gh api orgs/btclib-org/installations \
   --jq '.installations[] | select(.app_slug == "read-the-docs-community")
         | [.app_slug, .repository_selection]'
+# ["read-the-docs-community","all"]
 gh api repos/btclib-org/coin-addresses/hooks --jq length
+# 0
 ```
 
 A hook the second command finds is stale and is deleted rather than

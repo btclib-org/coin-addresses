@@ -217,6 +217,7 @@ what it intends to do, and what it deliberately does not, is its
 
 ## Links
 
+- Documentation: <https://coin-addresses.readthedocs.io/>
 - Source: <https://github.com/btclib-org/coin-addresses>
 - Releases: <https://github.com/btclib-org/coin-addresses/releases>
 - [CHANGELOG.md](https://github.com/btclib-org/coin-addresses/blob/main/CHANGELOG.md),
@@ -230,6 +231,7 @@ what it intends to do, and what it deliberately does not, is its
 [![lint workflow status](https://github.com/btclib-org/coin-addresses/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/btclib-org/coin-addresses/actions/workflows/lint.yml?query=branch%3Amain)
 [![test workflow status](https://github.com/btclib-org/coin-addresses/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/btclib-org/coin-addresses/actions/workflows/test.yml?query=branch%3Amain)
 [![docs workflow status](https://github.com/btclib-org/coin-addresses/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/btclib-org/coin-addresses/actions/workflows/docs.yml?query=branch%3Amain)
+[![documentation build](https://app.readthedocs.org/projects/coin-addresses/badge/?version=latest)](https://coin-addresses.readthedocs.io)
 [![mutation workflow status](https://github.com/btclib-org/coin-addresses/actions/workflows/mutation.yml/badge.svg?branch=main)](https://github.com/btclib-org/coin-addresses/actions/workflows/mutation.yml?query=branch%3Amain)
 [![fuzz workflow status](https://github.com/btclib-org/coin-addresses/actions/workflows/fuzz.yml/badge.svg?branch=main)](https://github.com/btclib-org/coin-addresses/actions/workflows/fuzz.yml?query=branch%3Amain)
 [![deps-latest workflow status](https://github.com/btclib-org/coin-addresses/actions/workflows/deps-latest.yml/badge.svg?branch=main)](https://github.com/btclib-org/coin-addresses/actions/workflows/deps-latest.yml?query=branch%3Amain)
