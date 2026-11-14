@@ -217,12 +217,10 @@ commit is one.
 This tree's `README.md` carries the OpenSSF Best Practices badge, and
 for such a tree the standard asks for no bypass actor (section 11 of
 [the organization's standard](https://github.com/btclib-org/.github#branch-protection-and-rulesets)).
-The bypass above is the organization-wide one, which the maintainer
-keeps until the backlog settles, with no date set
-(btclib-org/.github#2021). btclib-org/.github's
+The bypass above is the deviation btclib-org/.github's
 [`GOVERNANCE.md`](https://github.com/btclib-org/.github/blob/main/GOVERNANCE.md#how-a-decision-is-made),
-*How a decision is made*, records that deviation, and says what a tree
-with no bypass does in an emergency.
+*How a decision is made*, records, and that section also says what a
+tree with no bypass does in an emergency.
 
 ```shell
 gh api -X POST repos/btclib-org/coin-addresses/rulesets --input - <<'JSON'
