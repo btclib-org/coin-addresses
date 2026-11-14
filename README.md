@@ -14,6 +14,9 @@ and no signature.
 [![implementation](https://img.shields.io/pypi/implementation/coin-addresses.svg)](https://pypi.org/project/coin-addresses/)
 [![wheel](https://img.shields.io/pypi/wheel/coin-addresses.svg)](https://pypi.org/project/coin-addresses/)
 
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/16615/badge)](https://www.bestpractices.dev/projects/16615)
+[![OpenSSF Baseline](https://www.bestpractices.dev/projects/16615/baseline)](https://www.bestpractices.dev/projects/16615)
+
 ## What is here
 
 `coin_addresses.evm` derives and validates the addresses of Ethereum and
