@@ -424,10 +424,11 @@ that literally: a statement or a branch no test reaches fails it. A
 selective run is reported and not gated, and `tests/conftest.py`'s
 `coverage_fail_under` is what makes that difference.
 
-**A pull request that adds functionality must add tests of its own for
-it, and one that fixes a defect must add a test that fails without the
-fix.** The coverage gate does not ask for either: a new line that an
-existing test already reaches passes it.
+**Beyond that floor, new or changed functionality must come with tests
+of its own, added or updated in the same pull request, and a fix must
+come with a test that fails without the fix.** The coverage gate does
+not ask for either: a new line that an existing test already reaches
+passes it.
 
 The documentation build is the one to remember, because no hook reads
 reStructuredText: a docstring docutils cannot parse fails it with every
