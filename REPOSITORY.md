@@ -538,9 +538,10 @@ API's pages until `next` is `null`:
 ```shell
 u="$p/versions/?active=true"
 while [ "$u" != null ]; do
-  r=$(curl -s "$u")
+  r=$(curl -sf "$u") && next=$(printf '%s\n' "$r" | jq -r '.next // "null"') \
+    || { echo "no answer from $u" >&2; break; }
   printf '%s\n' "$r" | jq -c '.results[] | [.slug, .type, .ref]'
-  u=$(printf '%s\n' "$r" | jq -r .next)
+  u=$next
 done
 ```
 
