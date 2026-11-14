@@ -426,9 +426,10 @@ selective run is reported and not gated, and `tests/conftest.py`'s
 
 **Beyond that floor, new or changed functionality must come with tests
 of its own, added or updated in the same pull request, and a fix must
-come with a test that fails without the fix.** The coverage gate does
-not ask for either: a new line that an existing test already reaches
-passes it.
+come with a test that fails without the fix.** Coverage shows that a
+line ran, not that anything checked what it did, and a test that passes
+without the fix proves nothing about it. The coverage gate does not ask
+for either: a new line that an existing test already reaches passes it.
 
 The documentation build is the one to remember, because no hook reads
 reStructuredText: a docstring docutils cannot parse fails it with every
