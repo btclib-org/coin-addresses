@@ -9,6 +9,21 @@ number says when a release was cut, and promises nothing about
 compatibility, so a breaking change is announced in this file — read it
 before upgrading, rather than a digit.
 
+## v2026.11.15
+
+`coin_addresses.stellar` is new: it gives the account address of an
+ed25519 public key, 56 characters starting with `G`, and validates one.
+A muxed account's address is refused. The module publishes
+`address_from_pub_key`, `is_valid_address` and `assert_valid_address`,
+as every coin module does.
+
+The package requires `base58-bech32` 2026.11.14 or later, the first
+release with the strkey codec Stellar's addresses are written in. An
+environment that pins an earlier one has to move it.
+
+`griffe check` and `api_gaps.py` against v2026.11.14 report no break of
+the public API.
+
 ## v2026.11.14
 
 The first release of `coin-addresses`: the address a coin derives from a
