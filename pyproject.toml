@@ -208,11 +208,12 @@ package = ["src/coin_addresses"]
 # tracked files the sdist is meant not to carry, beyond what
 # [tool.uv.build-backend] source-exclude takes out, which check-sdist
 # reads for the uv backend: the workspaces of an editor and of an agent,
-# the file prettier reads its ignores from, COPYRIGHT, which
-# `project.license-files` does not name, and ClusterFuzzLite's
-# configuration with the harnesses it builds, which fuzz.yml reads and
-# nothing installed from the sdist runs
+# the file prettier reads its ignores from, the bestpractices.dev
+# answers, COPYRIGHT, which `project.license-files` does not name, and
+# ClusterFuzzLite's configuration with the harnesses it builds, which
+# fuzz.yml reads and nothing installed from the sdist runs
 git-only = [
+    ".bestpractices.json",
     ".claude/",
     ".clusterfuzzlite/",
     ".prettierignore",
@@ -268,8 +269,17 @@ ignore-regex = '`[^`]*`'
 # keeps a hyphenated token whole
 [tool.typos.files]
 # the hashes and the seeds [tool.codespell] skips above, written again
-# rather than shared because the two take different glob syntaxes
-extend-exclude = [".secrets.baseline", "uv.lock", "fuzz/corpus/**"]
+# rather than shared because the two take different glob syntaxes.
+#
+# .bestpractices.json is the bestpractices.dev answers of record, not
+# text to correct, and typos reads `CPY`, of ruff's rule id CPY001, as a
+# misspelling there
+extend-exclude = [
+    ".secrets.baseline",
+    "uv.lock",
+    "fuzz/corpus/**",
+    ".bestpractices.json",
+]
 
 [tool.typos.default]
 # addresses, keys and hashes written inline in the test sources: the hook
