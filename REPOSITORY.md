@@ -532,11 +532,16 @@ a pair of `null`s. The project's tags are the repository's topics, which
 serves.
 
 `stable` follows the highest semantic-version tag. This prints `latest`,
-`stable` and each tag the automation rule below activated:
+`stable` and each tag the automation rule below activated, following the
+API's pages until `next` is `null`:
 
 ```shell
-curl -s "$p/versions/?active=true" \
-  | jq -c '.results[] | [.slug, .type, .ref]'
+u="$p/versions/?active=true"
+while [ "$u" != null ]; do
+  r=$(curl -s "$u")
+  printf '%s\n' "$r" | jq -c '.results[] | [.slug, .type, .ref]'
+  u=$(printf '%s\n' "$r" | jq -r .next)
+done
 ```
 
 An automation rule, "Activate each v* release tag", activates each new
