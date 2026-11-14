@@ -9,6 +9,34 @@ behind them.
 
 [std]: https://github.com/btclib-org/.github
 
+## v2026.11.15
+
+### Stellar's account addresses, on ed25519
+
+`coin_addresses.stellar`, on `base58-bech32`'s strkey codec, whose floor
+moves to 2026.11.14. Solana and Stellar share the reading of an ed25519
+key (closes #28) (#38).
+
+### The package declares Development Status 4 - Beta
+
+(closes #39) (#41).
+
+### `README.md` and `REPOSITORY.md` record the live Read the Docs site
+
+(closes #40) (#42).
+
+### `CONTRIBUTING.md` stops prescribing the contributor's checkout layout
+
+(issue btclib-org/.github#2263) (#43).
+
+### The merge is explicit and auto-merge is off
+
+(issue btclib-org/.github#2272) (#46).
+
+### prettier leaves `.pre-commit-config.yaml` to pre-commit.ci
+
+(issue btclib-org/.github#2038) (#36).
+
 ## v2026.11.14
 
 ### Ethereum and the EVM chains, with EIP-55
