@@ -32,7 +32,10 @@ refuses, or an address that differs from the one its specification
 derives, is a vulnerability to report here. So is a refusal that prints
 a secret: section 7's
 [*A refusal carries no secret*](https://github.com/btclib-org/.github#a-refusal-carries-no-secret)
-says what a refusal may print.
+says what a refusal may print. So is a flaw in an address this package
+derives or accepts that lets funds be stolen, lost or locked: locked
+includes an output that consensus can spend but standard relay policy
+refuses.
 
 What is above an address is not here: a transaction, a signature or a
 wallet is the business of another library. Report a flaw wherever you
