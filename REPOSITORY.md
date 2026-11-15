@@ -333,19 +333,23 @@ gh api repos/<owner>/<repo>/git/tags/<sha> --jq .verification
 ## Merge methods
 
 **Squash is the only method GitHub can be asked for**, and auto-merge
-is off, so no pull request can be armed; the call is the one under
-*Creating the repository*. Read back:
+is off, [for the reason section 11
+gives](https://github.com/btclib-org/.github#merge-method); the call is
+the one under *Creating the repository*. Read back:
 
 ```shell
 gh api repos/btclib-org/coin-addresses \
   --jq '{allow_squash_merge, allow_merge_commit, allow_rebase_merge,
          allow_auto_merge, squash_merge_commit_title,
          squash_merge_commit_message, delete_branch_on_merge}'
-# {"allow_auto_merge":false,"allow_merge_commit":false,
-#  "allow_rebase_merge":false,"allow_squash_merge":true,
-#  "delete_branch_on_merge":true,
-#  "squash_merge_commit_message":"COMMIT_MESSAGES",
-#  "squash_merge_commit_title":"COMMIT_OR_PR_TITLE"}
+```
+
+```json
+{"allow_auto_merge":false,"allow_merge_commit":false,
+ "allow_rebase_merge":false,"allow_squash_merge":true,
+ "delete_branch_on_merge":true,
+ "squash_merge_commit_message":"COMMIT_MESSAGES",
+ "squash_merge_commit_title":"COMMIT_OR_PR_TITLE"}
 ```
 
 Read at 2026-11-14T16:32Z.
@@ -512,7 +516,10 @@ than redirect. The site answers:
 ```shell
 curl -sL -o /dev/null -w '%{http_code} %{url_effective}\n' \
   https://coin-addresses.readthedocs.io/
-# 200 https://coin-addresses.readthedocs.io/en/latest/
+```
+
+```text
+200 https://coin-addresses.readthedocs.io/en/latest/
 ```
 
 The project's public API answers without a token:
@@ -520,15 +527,35 @@ The project's public API answers without a token:
 ```shell
 p=https://app.readthedocs.org/api/v3/projects/coin-addresses
 curl -s -o /dev/null -w '%{http_code}\n' "$p/"
-# 200
+```
+
+```text
+200
+```
+
+```shell
 curl -s "$p/" | jq -c '{default_branch, repository: .repository.url}'
-# {"default_branch":"main",
-#  "repository":"https://github.com/btclib-org/coin-addresses.git"}
+```
+
+```json
+{"default_branch":"main",
+ "repository":"https://github.com/btclib-org/coin-addresses.git"}
+```
+
+```shell
 curl -s "$p/" | jq -c '[.programming_language.code, .homepage]'
-# ["words","https://github.com/btclib-org/coin-addresses"]
+```
+
+```json
+["words","https://github.com/btclib-org/coin-addresses"]
+```
+
+The project's tags and the repository's topics agree: this prints
+nothing and exits `0`.
+
+```shell
 diff <(curl -s "$p/" | jq -r '.tags[]' | sort) \
      <(gh api repos/btclib-org/coin-addresses --jq '.topics[]' | sort)
-# (nothing, exit 0)
 ```
 
 Read at 2026-11-14T10:34Z.
@@ -570,9 +597,18 @@ the repository carries no hook:
 gh api orgs/btclib-org/installations \
   --jq '.installations[] | select(.app_slug == "read-the-docs-community")
         | [.app_slug, .repository_selection]'
-# ["read-the-docs-community","all"]
+```
+
+```json
+["read-the-docs-community","all"]
+```
+
+```shell
 gh api repos/btclib-org/coin-addresses/hooks --jq length
-# 0
+```
+
+```text
+0
 ```
 
 A hook the second command finds is stale and is deleted rather than
