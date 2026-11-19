@@ -25,7 +25,7 @@ jobs:
   # reason claude-review.yml's calling job gives, and the secret is
   # named rather than inherited for the same reason.
   claude-release:
-    uses: btclib-org/.github/.github/workflows/reusable-claude-release.yml@76965633d09b390a5760b5201e3cf3e82022fe81 # v2026.11.13
+    uses: btclib-org/.github/.github/workflows/reusable-claude-release.yml@64fe8e701fb481dddd471dd256ade86f90e60b0f # v2026.11.14
     permissions:
       contents: read
       pull-requests: read # the open pull requests and the files each changes

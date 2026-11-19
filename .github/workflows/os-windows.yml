@@ -53,7 +53,7 @@ concurrency:
 
 jobs:
   suite-windows:
-    uses: btclib-org/.github/.github/workflows/reusable-os-suite.yml@76965633d09b390a5760b5201e3cf3e82022fe81 # v2026.11.13
+    uses: btclib-org/.github/.github/workflows/reusable-os-suite.yml@64fe8e701fb481dddd471dd256ade86f90e60b0f # v2026.11.14
     with:
       # two images of the family, one per architecture it ships runners for
       runners: '["windows-latest", "windows-11-arm"]'
