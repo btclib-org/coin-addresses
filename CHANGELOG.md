@@ -5,7 +5,9 @@ entries under `changelog/next/`, which each pull request that changes
 what a user gets adds as a file of its own (`CONTRIBUTING.md`'s *Pull
 requests*, section 9 of [the organization standard][std]). It writes the
 same section into [RELEASE_NOTES.md](./RELEASE_NOTES.md), whose section
-the GitHub release shows.
+the GitHub release shows. Sections released before the assembly were
+written for each file apart: there this file says what changed, and
+RELEASE_NOTES.md what a user has to act on.
 
 [std]: https://github.com/btclib-org/.github
 

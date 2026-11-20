@@ -3,7 +3,9 @@
 The release's own pull request assembles its section here from the
 entries under `changelog/next/`, and writes the same section into
 [CHANGELOG.md](./CHANGELOG.md). The GitHub release shows this file's
-section.
+section. Sections released before the assembly were written for each
+file apart: there this file says what a user has to act on, and
+CHANGELOG.md what changed.
 
 Versions are *[calendar versions](https://calver.org/)*, `YYYY.M.D`: the
 number says when a release was cut, and promises nothing about

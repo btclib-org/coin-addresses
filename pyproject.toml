@@ -302,10 +302,10 @@ intoto = "intoto"
 
 [tool.typos.type.verbatim]
 # the files that quote a word rather than use it: a changelog entry,
-# under changelog/next/ as pr<N>.md or in the history files it is
-# assembled into, quotes the misspelling it is about, and
-# .pre-commit-config.yaml the ones the spell checkers found. A glob
-# here matches a file's name, not its path
+# under changelog/next/ as pr<N>.md or pr<N>-<its citations>.md, or in
+# the history files it is assembled into, quotes the misspelling it is
+# about, and .pre-commit-config.yaml the ones the spell checkers found.
+# A glob here matches a file's name, not its path
 extend-glob = [
     "CHANGELOG.md",
     "RELEASE_NOTES.md",
