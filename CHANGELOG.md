@@ -3,9 +3,9 @@
 The release's own pull request assembles its section here from the
 entries under `changelog/next/`, which each pull request that changes
 what a user gets adds as a file of its own (`CONTRIBUTING.md`'s *Pull
-requests*, section 9 of [the organization standard][std]).
-[RELEASE_NOTES.md](./RELEASE_NOTES.md) has the release notes, which say
-what a user has to act on; this file is the record behind them.
+requests*, section 9 of [the organization standard][std]). It writes the
+same section into [RELEASE_NOTES.md](./RELEASE_NOTES.md), whose section
+the GitHub release shows.
 
 [std]: https://github.com/btclib-org/.github
 
