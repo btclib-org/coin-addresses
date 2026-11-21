@@ -37,7 +37,7 @@ concurrency:
 
 jobs:
   links:
-    uses: btclib-org/.github/.github/workflows/reusable-links.yml@76965633d09b390a5760b5201e3cf3e82022fe81 # v2026.11.13
+    uses: btclib-org/.github/.github/workflows/reusable-links.yml@a96ab77e0b59880c6412f62da26d3f62dfc31e0c # v2026.11.20
     with:
       # every markdown file the tree tracks and the rst it tracks, each
       # hidden directory with a term of its own, lychee's walker skipping

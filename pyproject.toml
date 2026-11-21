@@ -99,6 +99,9 @@ test = [
     "typing-extensions>=4.4",
 ]
 lint = [
+    # what mypy reads .github/scripts/check_link_destinations.py against,
+    # at the version the link hooks of .pre-commit-config.yaml install
+    "markdown-it-py>=4.3.0",
     "mypy>=2.3.1",
     "pre-commit>=4.6.2",
     "ruff>=0.16.9",
@@ -209,9 +212,11 @@ package = ["src/coin_addresses"]
 # [tool.uv.build-backend] source-exclude takes out, which check-sdist
 # reads for the uv backend: the workspaces of an editor and of an agent,
 # the file prettier reads its ignores from, the bestpractices.dev
-# answers, COPYRIGHT, which `project.license-files` does not name, and
+# answers, COPYRIGHT, which `project.license-files` does not name,
 # ClusterFuzzLite's configuration with the harnesses it builds, which
-# fuzz.yml reads and nothing installed from the sdist runs
+# fuzz.yml reads and nothing installed from the sdist runs, and
+# changelog/, whose entries a release assembles into the history files
+# the sdist carries
 git-only = [
     ".bestpractices.json",
     ".claude/",
@@ -219,6 +224,7 @@ git-only = [
     ".prettierignore",
     ".vscode/",
     "COPYRIGHT",
+    "changelog/",
     "fuzz/",
 ]
 
@@ -295,10 +301,17 @@ extend-ignore-re = ['[0-9A-Za-z+/]{26,}={0,2}']
 intoto = "intoto"
 
 [tool.typos.type.verbatim]
-# the files that quote a word rather than use it: a changelog entry quotes
-# the misspelling it is about, and .pre-commit-config.yaml the ones the
-# two spell checkers found
-extend-glob = ["CHANGELOG.md", "RELEASE_NOTES.md", ".pre-commit-config.yaml"]
+# the files that quote a word rather than use it: a changelog entry,
+# under changelog/next/ as pr<N>.md or pr<N>-<its citations>.md, or in
+# the history files it is assembled into, quotes the misspelling it is
+# about, and .pre-commit-config.yaml the ones the spell checkers found.
+# A glob here matches a file's name, not its path
+extend-glob = [
+    "CHANGELOG.md",
+    "RELEASE_NOTES.md",
+    "pr[0-9]*.md",
+    ".pre-commit-config.yaml",
+]
 extend-ignore-re = ['`[^`]*`']
 
 [tool.coverage.run]
@@ -306,7 +319,12 @@ extend-ignore-re = ['`[^`]*`']
 # unnamed, `--cov` measures every file the run imports. .github/scripts
 # is not an importable package, and coverage measures it by path
 source = ["coin_addresses", "tests", ".github/scripts"]
-omit = ["*/site-packages/*"]
+omit = [
+    "*/site-packages/*",
+    # a copy section 14 of the standard compares, tested where its
+    # canonical copy is (section 8 of the standard)
+    ".github/scripts/check_link_destinations.py",
+]
 # statement coverage alone calls a half-tested `if` fully covered
 branch = true
 
@@ -458,6 +476,10 @@ ignore = [
 # walks `__all__` with getattr and fails on the drift this rule would
 # catch
 "src/coin_addresses/__init__.py" = ["F822"]
+# a copy section 14 of the standard keeps byte for byte: what it prints
+# is its report, and its `noqa` is for a rule this tree ignores, which
+# RUF100 would report as unused
+".github/scripts/check_link_destinations.py" = ["RUF100", "T201"]
 # the D rules are not here: a public test function states what it
 # verifies under the same docstring gate as the library
 "tests/**" = [

@@ -224,8 +224,8 @@ what it intends to do, and what it deliberately does not, is its
 - Source: <https://github.com/btclib-org/coin-addresses>
 - Releases: <https://github.com/btclib-org/coin-addresses/releases>
 - [CHANGELOG.md](https://github.com/btclib-org/coin-addresses/blob/main/CHANGELOG.md),
-  and [RELEASE_NOTES.md](https://github.com/btclib-org/coin-addresses/blob/main/RELEASE_NOTES.md)
-  for what a release asks a user to act on
+  and [RELEASE_NOTES.md](https://github.com/btclib-org/coin-addresses/blob/main/RELEASE_NOTES.md),
+  which hold the same section for each release
 
 ## Status
 
